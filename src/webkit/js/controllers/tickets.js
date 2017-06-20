@@ -83,7 +83,7 @@
             };
             updateList();
         }])
-        .controller('Tickets.Sync', ['$scope', '$q', function ($scope, $q) {
+        .controller('Tickets.Sync', ['$scope', '$q', '$http', function ($scope, $q, $http) {
             $scope.remote = {
                 url: '',
                 login: '',
@@ -94,31 +94,55 @@
                 var deferred = $q.defer();
                 var db = require('lib-local/db.js');
                 var request = require('request');
-                var urlparts = $scope.remote.url.split('://');
 
                 $scope.promiseString = 'Syncing...';
                 $scope.promise = deferred.promise;
-
-                if ($scope.remote.login && $scope.remote.password && urlparts.length === 2) {
-                    urlparts[1] = $scope.remote.login + ':' + $scope.remote.password + '@' + urlparts[1];
-                }
+                $scope.token = undefined;
 
                 async.waterfall([
                     function (cb) {
-                        request(urlparts.join('://'), cb);
-                    },
-                    function (res, body, cb) {
-                        if (res.statusCode == 200) {
-                            try {
-                                var tickets = JSON.parse(body);
-                                cb(null, tickets);
-                            } catch (e) {
-                                cb(new Error('Corrupted response data'), null);
+                        $http({
+                            url: $scope.remote.url + '/api/access_tokens.json',
+                            method: 'POST',
+                            data: {
+                                email: $scope.remote.login,
+                                password: $scope.remote.password
                             }
-                        } else if (res.statusCode == 403) {
+                        }).then(function successCallback(response) {
+                            cb(null, response);
+                        }, function errorCallback(response) {
+                            cb(null, response);
+                        });
+                    },
+                    function (res, cb) {
+                        if (res.status === 200) {
+                            cb(null, res.data.token);
+                        } else if (res.status === 403) {
                             cb(new Error('Access Denied'), null);
                         } else {
-                            cb(new Error('Unknown error: HTTP status ' + res.statusCode), null);
+                            cb(new Error('Unknown error: HTTP status ' + res.status), null);
+                        }
+                    },
+                    function (token, cb) {
+                        $http({
+                            url: $scope.remote.url + '/api/data/dump/tickets.json',
+                            method: 'GET',
+                            headers: {
+                                'X-Authentication': token
+                            }
+                        }).then(function successCallback(response) {
+                            cb(null, response);
+                        }, function errorCallback(response) {
+                            cb(null, response);
+                        });
+                    },
+                    function (res, cb) {
+                        if (res.status === 200) {
+                            cb(null, res.data);
+                        } else if (res.status === 403) {
+                            cb(new Error('Access Denied'), null);
+                        } else {
+                            cb(new Error('Unknown error: HTTP status ' + res.status), null);
                         }
                     },
                     function (tickets, cb) {
@@ -143,7 +167,6 @@
                     }
                 ], function (err) {
                     if (err) {
-                        console.log(err);
                         $scope.alerts = [
                             {
                                 type: 'danger',
@@ -160,7 +183,6 @@
                         }
                     ];
                     deferred.resolve();
-                    $scope.$apply();
                 });
             };
         }]);
