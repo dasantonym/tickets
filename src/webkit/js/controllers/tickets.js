@@ -85,6 +85,7 @@
             updateList();
         }])
         .controller('Tickets.Sync', ['$scope', '$q', '$routeParams', function ($scope, $q, $routeParams) {
+            console.log('called');
             $scope.remote = {
                 url: '',
                 login: '',

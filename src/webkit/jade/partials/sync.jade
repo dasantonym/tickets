@@ -8,13 +8,13 @@ form(name='loginForm', role='form', ng-submit='submit()')
             h3.panel-title Remote Server
         .panel-body
             .form-group
-                label.control-label(for='url') Host URL
+                label.control-label Host URL
                 input.input-lg.form-control(name='url', type='url', placeholder='https://some.server.asdf/api/v1/tickets.json', ng-model='remote.url', required)
             .form-group
-                label.control-label(for='login') Login
+                label.control-label Login
                 input.input-lg.form-control(name='login', type='login', ng-model='remote.login')
             .form-group
-                label.control-label(for='password') Password
+                label.control-label Password
                 input.input-lg.form-control(name='password', type='password', ng-model='remote.password')
         .panel-footer.btn-group-lg.text-right
             input.btn.btn-primary.btn-lg(type='submit', value='Sync')
