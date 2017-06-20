@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        id        = "<%= id %>"
+        version   = "<%= version %>"
+        >
+
+    <name><%= name %></name>
+    <description><%= description %></description>
+    <author href="<%= author.url %>" email="<%= author.email %>"><%= author.name %></author>
+
+    <preference name="phonegap-version" value="6.5.0" />
+    <preference name="orientation"      value="portrait" />
+    <preference name="target-device"    value="universal" />
+    <preference name="fullscreen"       value="false" />
+    <preference name="permissions"      value="none"/>
+
+    <access origin="*" />
+</widget>

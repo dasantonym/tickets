@@ -1,0 +1,33 @@
+{
+  "name": "tickets",
+  "description": "Nondescript Ticket Software",
+  "homepage": "https://github.com/dasantonym/tickets",
+  "author": {
+    "name": "Anton",
+    "email": "antonymousfeedback@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dasantonym/tickets.git"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "/blob/master/LICENSE-MIT"
+    }
+  ],
+  "version": "0.1.0",
+  "main": "Gruntfile.js",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-concat": "^0.5.0",
+    "grunt-contrib-connect": "~0.7.1",
+    "grunt-contrib-jade": "^0.14.0",
+    "grunt-contrib-less": "^1.0.0",
+    "grunt-contrib-uglify": "^0.7.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-exec": "^0.4.6",
+    "grunt-nw-builder": "^3.1.0",
+    "grunt-phonegap": "~0.15.3"
+  }
+}

@@ -1,0 +1,21 @@
+alert(ng-repeat='alert in alerts' type='{{alert.type}}' close='closeAlert($index)') {{alert.msg}}
+h3 Tickets
+.panel.panel-default
+    .panel-body
+        form.form.form-horizontal
+            input.col-sm-12.form-control(placeholder='Search tickets', ng-model='filter.query')
+table.table.table-condensed.table-hover.table-striped
+    tbody
+        tr
+            th Name
+            th Email
+            th.hidden-xs Key
+            th.text-right.hidden-xs.hidden-md Status
+            th
+        tr(ng-repeat='ticket in tickets', ng-class='{ success: ticket.isVoid }', ng-if='!ticket.hideEntry')
+            td {{ ticket.firstname + ' ' + ticket.lastname }}
+            td {{ ticket.email }}
+            td.hidden-xs {{ ticket.ticket_key }}
+            td.text-right.hidden-xs.hidden-md {{ ticket.isVoid ? 'VOID' : 'UNCLAIMED' }}
+            td
+                a.btn.btn-success(ng-if='!ticket.isVoid', ng-click='claimTicket(ticket)') CLAIM

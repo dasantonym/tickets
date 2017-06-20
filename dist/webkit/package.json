@@ -1,0 +1,27 @@
+{
+  "name": "tickets",
+  "description": "Ticket Scanner Server",
+  "version": "0.1.0",
+  "main": "approot/index.html",
+  "window": {
+    "title": "Ticket Scanner Server",
+    "toolbar": false,
+    "frame": true,
+    "fullscreen": false,
+    "kiosk": false,
+    "position": "center",
+    "width": 1024,
+    "height": 600,
+    "min_width": 800,
+    "min_height": 400
+  },
+  "dependencies": {
+    "angular-busy": "^4.1.4",
+    "async": "^2.4.1",
+    "body-parser": "^1.17.2",
+    "connect": "^3.6.2",
+    "cors": "^2.8.3",
+    "nedb": "^1.8.0",
+    "request": "^2.81.0"
+  }
+}

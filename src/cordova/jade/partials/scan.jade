@@ -1,0 +1,15 @@
+h3
+.row-fluid
+    .btn.btn-primary.btn-lg.btn-scan.col-sm-12(role='button', type='button', ng-click='scan()') SCAN
+.clearfix
+.row-fluid(style='padding-top:32px;')
+    .panel(ng-repeat='alert in alerts', class='{{ "panel-" + alert.type }}')
+        .panel-heading
+            .panel-title
+                h3 {{alert.msg}}
+        .panel-body
+            ul.list-group(ng-if='alert.ticket')
+                li.list-group-item {{ alert.ticket.firstname }} {{ alert.ticket.lastname }}
+                li.list-group-item {{ alert.ticket.email }}
+                li.list-group-item {{ alert.ticket.ticket_key }}
+

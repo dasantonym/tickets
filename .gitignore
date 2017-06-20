@@ -1,0 +1,10 @@
+build/
+releases/
+.idea/
+**/node_modules/**/
+bower_components/
+cache/
+!.gitkeep
+!**/node_modules/lib-local
+.DS_Store
+*.keystore
