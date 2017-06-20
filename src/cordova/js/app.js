@@ -8,32 +8,46 @@
         'tickets.services.settings',
         'tickets.services.socket'
     ])
-        .config(['$routeProvider', '$locationProvider', '$logProvider', function ($routeProvider, $locationProvider, $logProvider) {
+    .config(['$routeProvider', '$locationProvider', '$logProvider', function ($routeProvider, $locationProvider, $logProvider) {
 
-            $logProvider.debugEnabled(true);
+        $logProvider.debugEnabled(true);
 
-            var partialsPath = 'partials/';
+        var partialsPath = './partials/';
 
-            $routeProvider.when('/', {templateUrl: partialsPath + 'scan.html', controller: 'Tickets.Scan'});
-            $routeProvider.when('/settings', {templateUrl: partialsPath + 'settings.html', controller: 'Tickets.Settings'});
+        $routeProvider.when('/', {templateUrl: partialsPath + 'scan.html', controller: 'Tickets.Scan'});
+        $routeProvider.when('/settings', {templateUrl: partialsPath + 'settings.html', controller: 'Tickets.Settings'});
 
-        }]).run(['$rootScope', '$q', 'App.Settings', function ($rootScope, $q, appSettings) {
+        $routeProvider.otherwise({redirectTo: '/'});
+    }]).run(['$rootScope', '$q', 'App.Settings', '$location', function ($rootScope, $q, appSettings, $location) {
+        $rootScope.goto = function (path) {
+            $location.path(path);
+        };
 
-            $rootScope.remote = {
-                ip: appSettings.remote.ip
-            };
+        $rootScope.remote = {
+            ip: appSettings.remote.ip
+        };
 
-            $rootScope.$apply();
+        $rootScope.$apply();
 
-            $rootScope.$on('$routeChangeStart', function (e, curr, prev) {
-                $rootScope.pageDefer = $q.defer();
-                $rootScope.pagePromise = $rootScope.pageDefer.promise;
-            });
-            $rootScope.$on('$routeChangeSuccess', function (e, curr, prev) {
+        $rootScope.$on('$routeChangeStart', function (e, curr, prev) {
+            if ($rootScope.pageDefer) {
                 $rootScope.pageDefer.resolve();
-            });
-            $rootScope.$on('$routeChangeError', function (e, curr, prev) {
+                $rootScope.pageDefer = null;
+            }
+            $rootScope.pageDefer = $q.defer();
+            $rootScope.pagePromise = $rootScope.pageDefer.promise;
+        });
+        $rootScope.$on('$routeChangeSuccess', function (e, curr, prev) {
+            if ($rootScope.pageDefer) {
+                $rootScope.pageDefer.resolve();
+                $rootScope.pageDefer = null;
+            }
+        });
+        $rootScope.$on('$routeChangeError', function (e, curr, prev) {
+            if ($rootScope.pageDefer) {
                 $rootScope.pageDefer.reject();
-            });
-        }]);
+                $rootScope.pageDefer = null;
+            }
+        });
+    }]);
 }());

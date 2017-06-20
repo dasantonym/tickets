@@ -2,7 +2,7 @@
 
 JavaScript software package consisting of:
 
-* Local Ticket Server (Node-Webkit) 
+* Local Ticket Server (NW.js) 
 * Mobile Ticket Reader (Apache Cordova)
 
 Uses AngularJS and Bootstrap
@@ -25,10 +25,10 @@ bower install
 grunt
 
 # build the server
-grunt nodewebkit:server
+grunt nwjs
 ```
 
-You can find the build in ``releases/node-webkit``.
+You can find the build in ``releases/webkit``.
 
 
 ### Ticket Scanner ###

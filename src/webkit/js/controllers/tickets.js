@@ -17,7 +17,7 @@
 
             $scope.$watch('filter.query', function (query) {
                 async.each($scope.tickets, function (ticket, next) {
-                    var contents = [ticket.firstname.toLowerCase, ticket.lastname.toLowerCase(), ticket.email.toLowerCase(), ticket.ticket_key].join(' ');
+                    var contents = [ticket.firstname.toLowerCase, ticket.lastname.toLowerCase(), ticket.email.toLowerCase(), ticket.token].join(' ');
                     if (contents.indexOf(query.toLowerCase()) < 0) {
                         $scope.tickets[$scope.tickets.indexOf(ticket)].hideEntry = true;
                     } else {
@@ -28,11 +28,11 @@
             });
 
             $scope.claimTicket = function (ticket) {
-                if (window.confirm('Are you sure you are claiming the right ticket #' + ticket.ticket_key + ' (' + [ticket.firstname, ticket.lastname].join(' ') + ')?')) {
+                if (window.confirm('Are you sure you are claiming the right ticket ' + ticket.token + ' (' + [ticket.firstname, ticket.lastname].join(' ') + ')?')) {
                     delete ticket['$$hashKey'];
                     console.log(ticket);
                     ticket.isVoid = true;
-                    db.update(ticket, ticket.ticket_key, function (err) {
+                    db.update(ticket, ticket.token, function (err) {
                         if (err) {
                             console.log(err);
                             $scope.alerts = [
@@ -81,11 +81,9 @@
                     }, 2000);
                 });
             };
-
             updateList();
         }])
-        .controller('Tickets.Sync', ['$scope', '$q', '$routeParams', function ($scope, $q, $routeParams) {
-            console.log('called');
+        .controller('Tickets.Sync', ['$scope', '$q', function ($scope, $q) {
             $scope.remote = {
                 url: '',
                 login: '',
@@ -127,7 +125,7 @@
                         async.each(tickets, function (ticket, next) {
                             async.waterfall([
                                 function (cb) {
-                                    db.findOne({ ticket_key: ticket.ticket_key }, cb);
+                                    db.findOne({ token: ticket.token }, cb);
                                 },
                                 function (existing_ticket, cb) {
                                     if (existing_ticket) {
