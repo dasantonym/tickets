@@ -20,7 +20,8 @@
     "angular-busy": "~4.1.4",
     "angular-route": "~1.6.4",
     "angular-bootstrap": "~1.1.0",
-    "async": "~2.4.1"
+    "async": "~2.4.1",
+    "angular-PubSub": "angular.pubsub#^1.0.0"
   },
   "resolutions": {
     "angular": "~1.6.4"

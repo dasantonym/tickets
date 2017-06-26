@@ -29,3 +29,4 @@ html(ng-app='ticket-server')
             .container-fluid
                 .main-content
                     div(ng-view, cg-busy="{promise:promise,message:promiseString,templateUrl:'./partials/busy.html'}")
+            io-loader(ip-address="127.0.0.1")

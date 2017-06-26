@@ -4,6 +4,8 @@
         'ui.bootstrap',
         'ngRoute',
         'cgBusy',
+        'PubSub',
+        'tickets.directives.ioloader',
         'tickets.controllers.tickets',
         'tickets.services.settings',
         'tickets.services.socket'

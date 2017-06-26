@@ -3,12 +3,8 @@
     var require = global.require;
     angular.module(
         'tickets.controllers.tickets', [])
-        .controller('Tickets.List', ['$scope', '$q', function ($scope, $q) {
+        .controller('Tickets.List', ['$scope', '$q', 'PubSub', function ($scope, $q, PubSub) {
             var db = require('lib-local/db.js');
-            var deferred = $q.defer();
-
-            $scope.promiseString = 'Loading tickets...';
-            $scope.promise = deferred.promise;
 
             $scope.tickets = [];
             $scope.filter = {
@@ -53,7 +49,7 @@
                 }
             };
 
-            var updateList = function () {
+            var updateList = function (callback) {
                 db.find({}, function (err, tickets) {
                     tickets.sort(function compare(a, b) {
                         if (a.lastname < b.lastname)
@@ -83,113 +79,64 @@
                     }
                     deferred.resolve();
                     $scope.$apply();
-                    window.setTimeout(function () {
-                        updateList();
-                    }, 2000);
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
                 });
             };
-            updateList();
+
+            var deferred = $q.defer();
+            $scope.promiseString = 'Loading tickets...';
+            $scope.promise = deferred.promise;
+
+            function wrapUpdates() {
+                updateList(function () {
+                    setTimeout(wrapUpdates, 2000);
+                });
+            }
+
+            wrapUpdates();
+
+            //PubSub.subscribe('sync-update', updateList);
+            //PubSub.subscribe('void-update', updateList);
         }])
-        .controller('Tickets.Sync', ['$scope', '$q', '$http', function ($scope, $q, $http) {
+        .controller('Tickets.Sync', ['$scope', '$q', 'App.Settings', function ($scope, $q, settings) {
             $scope.remote = {
-                url: '',
-                login: '',
-                password: ''
+                url: settings.remote.url,
+                login: settings.remote.login,
+                password: settings.remote.password
             };
 
-            $scope.submit = function () {
+            $scope.local = {
+                url: settings.push.url
+            };
+
+            $scope.submitSync = function () {
                 var deferred = $q.defer();
-                var db = require('lib-local/db.js');
-
-                $scope.promiseString = 'Syncing...';
+                $scope.promiseString = 'Saving...';
                 $scope.promise = deferred.promise;
-                $scope.token = undefined;
+                settings.storeRemote($scope.remote.url, $scope.remote.login, $scope.remote.password);
+                $scope.alerts = [
+                    {
+                        type: 'success',
+                        msg: 'Sync settings saved'
+                    }
+                ];
+                deferred.resolve();
+            };
 
-                async.waterfall([
-                    function (cb) {
-                        $http({
-                            url: $scope.remote.url + '/api/access_tokens.json',
-                            method: 'POST',
-                            data: {
-                                email: $scope.remote.login,
-                                password: $scope.remote.password
-                            }
-                        }).then(function successCallback(response) {
-                            cb(null, response);
-                        }, function errorCallback(response) {
-                            cb(null, response);
-                        });
-                    },
-                    function (res, cb) {
-                        if (res.status === 200) {
-                            cb(null, res.data.token);
-                        } else if (res.status === 403) {
-                            cb(new Error('Access Denied'), null);
-                        } else {
-                            cb(new Error('Unknown error: HTTP status ' + res.status), null);
-                        }
-                    },
-                    function (token, cb) {
-                        $http({
-                            url: $scope.remote.url + '/api/data/dump/tickets.json',
-                            method: 'GET',
-                            headers: {
-                                'X-Authentication': token
-                            }
-                        }).then(function successCallback(response) {
-                            cb(null, response);
-                        }, function errorCallback(response) {
-                            cb(null, response);
-                        });
-                    },
-                    function (res, cb) {
-                        if (res.status === 200) {
-                            cb(null, res.data);
-                        } else if (res.status === 403) {
-                            cb(new Error('Access Denied'), null);
-                        } else {
-                            cb(new Error('Unknown error: HTTP status ' + res.status), null);
-                        }
-                    },
-                    function (tickets, cb) {
-                        async.each(tickets, function (ticket, next) {
-                            async.waterfall([
-                                function (cb) {
-                                    db.findOne({ token: ticket.token }, cb);
-                                },
-                                function (existing_ticket, cb) {
-                                    if (existing_ticket) {
-                                        cb(null, existing_ticket);
-                                    } else {
-                                        db.create(ticket, cb);
-                                    }
-                                }
-                            ], function (err) {
-                                next(err);
-                            });
-                        }, function (err) {
-                            cb(err);
-                        });
+            $scope.submitPush = function () {
+                var deferred = $q.defer();
+                $scope.promiseString = 'Saving...';
+                $scope.promise = deferred.promise;
+                settings.storePush($scope.local.url);
+                $scope.alerts = [
+                    {
+                        type: 'success',
+                        msg: 'Push settings saved'
                     }
-                ], function (err) {
-                    if (err) {
-                        $scope.alerts = [
-                            {
-                                type: 'danger',
-                                msg: err.message
-                            }
-                        ];
-                        deferred.reject();
-                        return;
-                    }
-                    $scope.alerts = [
-                        {
-                            type: 'success',
-                            msg: 'Sync completed'
-                        }
-                    ];
-                    deferred.resolve();
-                });
+                ];
+                deferred.resolve();
             };
         }]);
 })();

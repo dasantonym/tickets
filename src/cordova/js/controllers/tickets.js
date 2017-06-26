@@ -23,6 +23,7 @@
                                                     ticket: response.ticket
                                                 }
                                             ];
+                                            appSocket.sendTicketVoid(response.ticket.token);
                                         } else {
                                             $scope.alerts = [
                                                 {
@@ -85,7 +86,7 @@
 
             $scope.$watch('filter.query', function (query) {
                 async.each($scope.tickets, function (ticket, next) {
-                    var contents = [ticket.firstname, ticket.lastname, ticket.ticket_key].join(' ');
+                    var contents = [ticket.firstname, ticket.lastname, ticket.token].join(' ');
                     if (contents.indexOf(query) < 0) {
                         $scope.tickets[$scope.tickets.indexOf(ticket)].hideEntry = true;
                     } else {

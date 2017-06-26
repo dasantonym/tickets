@@ -1,4 +1,4 @@
-angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.Socket', function (appSocket) {
+angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.Socket', 'PubSub', function (appSocket, PubSub) {
     function load(file) {
         var filetag = document.createElement('script');
         filetag.setAttribute("type", "text/javascript");
@@ -7,37 +7,40 @@ angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.So
             document.getElementsByTagName("head")[0].appendChild(filetag);
         }
     }
-    function pollSocket(ipAdress) {
+
+    function pollSocket(ipAddress) {
         window.setTimeout(function () {
-            if (typeof io === 'function') {
-                var socket = io("http://" + ipAdress + ":7777");
+            if (typeof io === 'function' && typeof ipAddress === 'string') {
+                var socket = io("http://" + ipAddress + ":7777");
                 appSocket.setSocket(socket);
                 appSocket.setSocketCallback(function (token) {
                     console.log('void', token);
+                    PubSub.publish('void-update', token);
                 });
                 console.log('connected socket');
             } else {
-                console.log('io not defined, retrying', io);
+                console.log('io not defined or empty ip, retrying');
                 window.setTimeout(function () {
-                    pollSocket(ipAdress);
+                    pollSocket(ipAddress);
                 }, 0);
             }
-        },500);
+        }, 500);
     }
+
     return {
         restrict: "E",
-        scope: {ipAddress: "@"},
+        scope: {
+            ipAddress: "@"
+        },
         link: function (scope, iElem, iAttrs) {
-            console.log(iAttrs.ipAddress);
-            if (iAttrs.ipAddress) {
-                load("http://" + iAttrs.ipAddress + ":7777/socket.io/socket.io.js");
-                pollSocket(iAttrs.ipAddress);
-            }
-            iAttrs.$observe("ipAddress", function () {
+            function setup() {
                 if (iAttrs.ipAddress) {
                     load("http://" + iAttrs.ipAddress + ":7777/socket.io/socket.io.js");
                     pollSocket(iAttrs.ipAddress);
                 }
+            }
+            iAttrs.$observe("ipAddress", function () {
+                setup();
             });
         }
     }

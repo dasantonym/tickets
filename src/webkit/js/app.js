@@ -4,7 +4,12 @@
         'ui.bootstrap',
         'ngRoute',
         'cgBusy',
-        'tickets.controllers.tickets'
+        'PubSub',
+        'tickets.controllers.tickets',
+        'tickets.services.settings',
+        'tickets.services.sync',
+        'tickets.directives.ioloader',
+        'tickets.services.socket'
     ])
     .config(['$routeProvider', '$locationProvider', '$logProvider', '$compileProvider', function ($routeProvider, $locationProvider, $logProvider, $compileProvider) {
         $logProvider.debugEnabled(true);
@@ -17,7 +22,7 @@
 
         $routeProvider.otherwise({redirectTo: '/list'});
 
-    }]).run(['$rootScope', '$q', '$location', function ($rootScope, $q, $location) {
+    }]).run(['$rootScope', '$q', '$location', 'App.Sync', function ($rootScope, $q, $location, appSync) {
         $rootScope.goto = function (path) {
             $location.path(path);
         };
@@ -42,5 +47,10 @@
                 $rootScope.pageDefer = null;
             }
         });
+
+        var socket = global.require('lib-local/socket.io');
+        socket.setup();
+
+        appSync.startBackgroundSync();
     }]);
 }());

@@ -4,10 +4,11 @@ angular.module('tickets.services.socket', [])
             socket: null,
             socketCallback: null,
             setSocket: function (socket) {
+                var _this = this;
                 this.socket = socket;
                 this.socket.on('ticket.void', function (token) {
-                    if (typeof this.socketCallback === 'function') {
-                        this.socketCallback(token);
+                    if (typeof _this.socketCallback === 'function') {
+                        _this.socketCallback(token);
                     }
                 });
             },

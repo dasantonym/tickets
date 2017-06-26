@@ -104,6 +104,7 @@ module.exports = function (grunt) {
                     'bower_components/angular-route/angular-route.min.js',
                     'bower_components/angular-animate/angular-animate.min.js',
                     'bower_components/angular-busy/dist/angular-busy.min.js',
+                    'bower_components/angular-PubSub/dist/angular-pubsub.min.js',
                     'bower_components/async/dist/async.min.js'
                 ],
                 dest: 'dist/cordova/js/tickets-deps.min.js'
@@ -114,7 +115,8 @@ module.exports = function (grunt) {
                     'bower_components/angular-bootstrap/ui-bootstrap.min.js',
                     'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
                     'bower_components/angular-route/angular-route.min.js',
-                    'bower_components/angular-animate/angular-animate.min.js'
+                    'bower_components/angular-animate/angular-animate.min.js',
+                    'bower_components/angular-PubSub/dist/angular-pubsub.min.js'
                 ],
                 dest: 'dist/webkit/approot/js/tickets-deps.min.js'
             }

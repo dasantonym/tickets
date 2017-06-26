@@ -28,4 +28,5 @@ html(ng-app='ticket-scanner')
             .container-fluid
                 .main-content
                     div(ng-view, cg-busy="{promise:promise,message:promiseString,templateUrl:'./partials/busy.html'}")
+        io-loader(ip-address='{{ remote.ip }}')
         script(type='text/javascript') app.initialize();
