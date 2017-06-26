@@ -5,6 +5,7 @@
         'ngRoute',
         'cgBusy',
         'PubSub',
+        'ngFileUpload',
         'tickets.controllers.tickets',
         'tickets.services.settings',
         'tickets.services.sync',
@@ -13,7 +14,7 @@
         'tickets.directives.ioloader',
         'tickets.directives.utils'
     ])
-    .config(['$routeProvider', '$locationProvider', '$logProvider', '$compileProvider', function ($routeProvider, $locationProvider, $logProvider, $compileProvider) {
+    .config(['$routeProvider', '$locationProvider', '$logProvider', function ($routeProvider, $locationProvider, $logProvider) {
         $logProvider.debugEnabled(true);
 
         var partialsPath = './partials/';

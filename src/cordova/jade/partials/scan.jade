@@ -1,17 +1,16 @@
-.row-fluid(ng-if='!alerts || alerts.length === 0')
+.row-fluid.pad-top-2x(ng-if='!alerts || alerts.length === 0')
     .col-sm-12
-        .btn.btn-primary.btn-lg.btn-scan(role='button', type='button', ng-click='scan()') SCAN
+        .btn.btn-primary.btn-lg.btn-scan.text-large(role='button', type='button', ng-click='scan()') SCAN
     .clearfix
-.row-fluid(ng-if='alerts && alerts.length !== 0')
+.row-fluid.pad-top(ng-if='alerts && alerts.length !== 0')
     .panel(ng-repeat='alert in alerts', class='{{ "panel-" + alert.type }}')
         .panel-heading
             .panel-title
-                h3 {{alert.msg}}
+                h4 {{alert.msg}}
         .panel-body
             ul.list-group(ng-if='alert.ticket')
-                li.list-group-item {{ alert.ticket.firstname }} {{ alert.ticket.lastname }}
-                li.list-group-item {{ alert.ticket.email }}
-                li.list-group-item {{ alert.ticket.type }} {{ alert.ticket.category }}
-                li.list-group-item {{ alert.ticket.token }}
-            button.btn.btn-default.btn-sm(ng-click='alerts.splice(0,1)') OK
-
+                li.list-group-item.text-large(ng-if='alert.ticket.firstname || alert.ticket.lastname') {{ alert.ticket.firstname }} {{ alert.ticket.lastname }}
+                li.list-group-item.text-large {{ alert.ticket.email }}
+                li.list-group-item.text-large {{ alert.ticket.type }}
+                li.list-group-item.text-large(ng-if='alert.ticket.category') {{ alert.ticket.category }}
+            button.btn.btn-default(ng-click='alerts.splice(0,1)') OK

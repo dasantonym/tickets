@@ -18,7 +18,7 @@ table.table.table-responsive.table-condensed.table-hover.table-striped
         tr(ng-repeat='ticket in tickets', ng-class='{ success: ticket.void }', ng-if='!ticket.hideEntry')
             td {{ ticket.firstname + ' ' + ticket.lastname }}
             td {{ ticket.email }}
-            td {{ ticket.order_number }}
+            td.text-nowrap {{ ticket.order_number }}
             td {{ ticket.type }}
             td {{ ticket.category }}
             td.hidden-xs {{ ticket.token }}

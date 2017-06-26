@@ -116,7 +116,10 @@ module.exports = function (grunt) {
                     'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
                     'bower_components/angular-route/angular-route.min.js',
                     'bower_components/angular-animate/angular-animate.min.js',
-                    'bower_components/angular-PubSub/dist/angular-pubsub.min.js'
+                    'bower_components/angular-busy/dist/angular-busy.min.js',
+                    'bower_components/angular-PubSub/dist/angular-pubsub.min.js',
+                    'bower_components/ng-file-upload/ng-file-upload.min.js',
+                    'bower_components/async/dist/async.min.js'
                 ],
                 dest: 'dist/webkit/approot/js/tickets-deps.min.js'
             }
@@ -126,7 +129,7 @@ module.exports = function (grunt) {
                 root: 'dist/cordova',
                 cli: 'cordova',
                 cleanBeforeBuild: true,
-                plugins: ['phonegap-plugin-barcodescanner'],
+                plugins: ['phonegap-plugin-barcodescanner','cordova-plugin-statusbar'],
                 platforms: ['ios'],
                 permissions: ['CAMERA','FLASHLIGHT','INTERNET'],
                 verbose: true,
