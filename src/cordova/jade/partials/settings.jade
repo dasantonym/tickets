@@ -1,5 +1,7 @@
-alert(ng-repeat='alert in alerts' type='{{alert.type}}' close='closeAlert($index)') {{alert.msg}}
-h3 Settings
+h3.page-header Settings
+
+.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
+
 form(name='loginForm', role='form', ng-submit='submit()')
     .panel.panel-primary
         .panel-heading

@@ -1,44 +1,46 @@
-alert(ng-repeat='alert in alerts' type='{{alert.type}}' close='closeAlert($index)') {{alert.msg}}
+h3.page-header Backup
 
-h3 Backup
+.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
 
-form(name='settingsForm', role='form', ng-submit='submitSettings()')
-    .panel.panel-primary
-        .panel-heading
-            h3.panel-title Backup settings
-        .panel-body
-            .form-group
-                label.control-label Automatic backup interval (minutes, 0 to turn off automatic backups)
-                input.input.form-control(name='backupInterval', type='number',
+.col-md-6
+    form(name='createForm', role='form', ng-submit='submitCreate()')
+        .panel.panel-default
+            .panel-heading
+                h3.panel-title Create a manual backup
+            .panel-body
+                .form-group
+                    label.control-label Destination Folder
+                    input.input.form-control(name='backupPath', type='file',
+                        ng-model='backup.backupPath', required, nwdirectory)
+            .panel-footer.text-right
+                input.btn.btn-primary.btn(type='submit', value='Create')
+
+.col-md-6
+    form(name='restoreForm', role='form', ng-submit='submitRestore()')
+        .panel.panel-default
+            .panel-heading
+                h3.panel-title Restore from backup
+            .panel-body
+                .form-group
+                    label.control-label Backup Folder
+                    input.input.form-control(name='restorePath', type='file',
+                        ng-model='backup.restorePath', required, nwdirectory)
+            .panel-footer.text-right
+                input.btn.btn-primary.btn(type='submit', value='Restore')
+
+.col-md-12
+    form(name='settingsForm', role='form', ng-submit='submitSettings()')
+        .panel.panel-default
+            .panel-heading
+                h3.panel-title Automatic Backup
+            .panel-body
+                .col-md-6.form-group
+                    label.control-label Interval (minutes, 0 to turn off automatic backups)
+                    input.input.form-control(name='backupInterval', type='number',
                     ng-model='backup.backupInterval', string-to-number, required)
-            .form-group
-                label.control-label Destination Folder
-                input.input.form-control(name='autoBackupPath', type='file',
+                .col-md-6.form-group
+                    label.control-label Destination Folder
+                    input.input.form-control(name='autoBackupPath', type='file',
                     ng-model='backup.autoBackupPath', nwdirectory)
-        .panel-footer.text-right
-            input.btn.btn-primary.btn(type='submit', value='Save')
-
-form(name='createForm', role='form', ng-submit='submitCreate()')
-    .panel.panel-primary
-        .panel-heading
-            h3.panel-title Create a manual backup
-        .panel-body
-            .form-group
-                label.control-label Destination Folder
-                input.input.form-control(name='backupPath', type='file',
-                    ng-model='backup.backupPath', required, nwdirectory)
-        .panel-footer.text-right
-            input.btn.btn-primary.btn(type='submit', value='Create')
-
-form(name='restoreForm', role='form', ng-submit='submitRestore()')
-    .panel.panel-primary
-        .panel-heading
-            h3.panel-title Restore from backup
-        .panel-body
-            .form-group
-                label.control-label Backup Folder
-                input.input.form-control(name='restorePath', type='file',
-                    ng-model='backup.restorePath', required, nwdirectory)
-        .panel-footer.text-right
-            input.btn.btn-primary.btn(type='submit', value='Restore')
-
+            .panel-footer.text-right
+                input.btn.btn-primary.btn(type='submit', value='Save')

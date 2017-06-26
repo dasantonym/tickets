@@ -5,10 +5,11 @@ angular.module('tickets.services.settings', [])
                 url: localStorage["remote.url"],
                 login: localStorage["remote.login"],
                 password: localStorage["remote.password"],
-                interval: localStorage["remote.interval"],
+                interval: localStorage["remote.interval"]
             },
             push: {
-                url: localStorage["push.url"]
+                url: localStorage["push.url"],
+                backoff: localStorage["push.backoff"] || 0
             },
             stats: {
                 last_sync: localStorage["stats.last_sync"],
@@ -17,7 +18,6 @@ angular.module('tickets.services.settings', [])
             backup: {
                 backupInterval: localStorage["backup.backupInterval"],
                 autoBackupPath: localStorage["backup.autoBackupPath"]
-
             },
             storeRemote: function (url, login, password, interval) {
                 this.remote.url = url;
@@ -29,9 +29,11 @@ angular.module('tickets.services.settings', [])
                 localStorage["remote.password"] = this.remote.password;
                 localStorage["remote.interval"] = this.remote.interval;
             },
-            storePush: function (url) {
-                this.remote.url = url;
-                localStorage["push.url"] = this.remote.url;
+            storePush: function (url, backoff) {
+                this.push.url = url;
+                this.push.backoff = backoff;
+                localStorage["push.url"] = this.push.url;
+                localStorage["push.backoff"] = this.push.backoff;
             },
             storeBackup: function (backupInterval, autoBackupPath) {
                 this.backup.backupInterval = backupInterval;

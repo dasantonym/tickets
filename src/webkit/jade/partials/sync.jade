@@ -1,9 +1,9 @@
-alert(ng-repeat='alert in alerts' type='{{alert.type}}' close='closeAlert($index)') {{alert.msg}}
+h3.page-header Sync
 
-h3 Sync
+.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
 
-form(name='syncForm', role='form', ng-submit='submitSync()')
-    .panel.panel-primary
+form.col-md-6(name='syncForm', role='form', ng-submit='submitSync()')
+    .panel.panel-default
         .panel-heading
             h3.panel-title Automatically load Tickets from Remote Server
         .panel-body
@@ -23,13 +23,17 @@ form(name='syncForm', role='form', ng-submit='submitSync()')
         .panel-footer.text-right
             input.btn.btn-primary.btn(type='submit', value='Save')
 
-form(name='pushForm', role='form', ng-submit='submitPush()')
-    .panel.panel-primary
+form.col-md-6(name='pushForm', role='form', ng-submit='submitPush()')
+    .panel.panel-default
         .panel-heading
             h3.panel-title Push Tickets to Local Instance
         .panel-body
             .form-group
                 label.control-label Host URL
-                input.input.form-control(name='url', type='url', placeholder='http://192.168.0.1', ng-model='local.url', required)
+                input.input.form-control(name='url', type='url',
+                    placeholder='http://192.168.0.1', ng-model='push.url', required)
+            .form-group
+                label.control-label Backoff (seconds)
+                input.input.form-control(name='backoff', type='number', ng-model='push.backoff', string-to-number)
         .panel-footer.text-right
             input.btn.btn-primary.btn(type='submit', value='Save')

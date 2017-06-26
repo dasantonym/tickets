@@ -111,8 +111,9 @@
                 interval: settings.remote.interval || 0
             };
 
-            $scope.local = {
-                url: settings.push.url
+            $scope.push = {
+                url: settings.push.url,
+                backoff: settings.push.backoff || 0
             };
 
             $scope.submitSync = function () {
@@ -135,7 +136,7 @@
                 var deferred = $q.defer();
                 $scope.promiseString = 'Saving...';
                 $scope.promise = deferred.promise;
-                settings.storePush($scope.local.url);
+                settings.storePush($scope.push.url, $scope.push.backoff);
                 $scope.alerts = [
                     {
                         type: 'success',

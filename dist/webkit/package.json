@@ -11,7 +11,7 @@
     "kiosk": false,
     "position": "center",
     "width": 1024,
-    "height": 600,
+    "height": 640,
     "min_width": 800,
     "min_height": 400
   },

@@ -1,9 +1,10 @@
-alert(ng-repeat='alert in alerts' type='{{alert.type}}' close='closeAlert($index)') {{alert.msg}}
-h3 Tickets
 .panel.panel-default
     .panel-body
         form.form.form-horizontal
             input.col-sm-12.form-control(placeholder='Search tickets', ng-model='filter.query')
+
+.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
+
 table.table.table-responsive.table-condensed.table-hover.table-striped
     tbody
         tr
