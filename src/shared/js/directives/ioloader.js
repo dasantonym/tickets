@@ -1,9 +1,16 @@
 angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.Socket', 'PubSub', function (appSocket, PubSub) {
     function load(file) {
-        var filetag = document.createElement('script');
+        var existing = document.getElementById("socketScript"),
+            filetag = document.createElement('script');
+
+        filetag.setAttribute("id", "socketScript");
         filetag.setAttribute("type", "text/javascript");
         filetag.setAttribute("src", file);
-        if (typeof filetag !== "undefined") {
+
+        if (existing && filetag.src !== existing.src) {
+            document.getElementsByTagName("head")[0].removeChild(existing);
+            document.getElementsByTagName("head")[0].appendChild(filetag);
+        } else if (filetag && !existing) {
             document.getElementsByTagName("head")[0].appendChild(filetag);
         }
     }
@@ -14,12 +21,12 @@ angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.So
                 var socket = io("http://" + ipAddress + ":7777");
                 appSocket.setSocket(socket);
                 appSocket.setSocketCallback(function (token) {
-                    console.log('void', token);
+                    console.log('Socket.io void callback with token:', token);
                     PubSub.publish('void-update', token);
                 });
-                console.log('connected socket');
+                console.log('Socket.io connected');
             } else {
-                console.log('io not defined or empty ip, retrying');
+                console.log('Socket.io not defined or empty IP, retrying');
                 window.setTimeout(function () {
                     pollSocket(ipAddress);
                 }, 0);

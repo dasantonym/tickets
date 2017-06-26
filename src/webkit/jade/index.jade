@@ -26,6 +26,8 @@ html(ng-app='ticket-server')
                         ul.nav.navbar-nav
                             li
                                 a(ng-click="goto('/sync')") Sync
+                            li
+                                a(ng-click="goto('/backup')") Backup
             .container-fluid
                 .main-content
                     div(ng-view, cg-busy="{promise:promise,message:promiseString,templateUrl:'./partials/busy.html'}")

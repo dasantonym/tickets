@@ -5,24 +5,28 @@ h3 Sync
 form(name='syncForm', role='form', ng-submit='submitSync()')
     .panel.panel-primary
         .panel-heading
-            h3.panel-title Load Tickets From Remote Server
+            h3.panel-title Automatically load Tickets from Remote Server
         .panel-body
             .form-group
                 label.control-label Host URL
-                input.input.form-control(name='url', type='url', placeholder='https://some.server.asdf', ng-model='remote.url', required)
+                input.input.form-control(name='url', type='url',
+                    placeholder='https://some.server.asdf', ng-model='remote.url', required)
             .form-group
                 label.control-label Login
                 input.input.form-control(name='login', type='login', ng-model='remote.login')
             .form-group
                 label.control-label Password
                 input.input.form-control(name='password', type='password', ng-model='remote.password')
+            .form-group
+                label.control-label Interval (minutes, 0 to turn off)
+                input.input.form-control(name='interval', type='number', ng-model='remote.interval', string-to-number)
         .panel-footer.text-right
-            input.btn.btn-primary.btn(type='submit', value='Sync')
+            input.btn.btn-primary.btn(type='submit', value='Save')
 
 form(name='pushForm', role='form', ng-submit='submitPush()')
     .panel.panel-primary
         .panel-heading
-            h3.panel-title Push Tickets To Local Instance
+            h3.panel-title Push Tickets to Local Instance
         .panel-body
             .form-group
                 label.control-label Host URL

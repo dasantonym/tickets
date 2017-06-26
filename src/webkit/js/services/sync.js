@@ -1,11 +1,19 @@
 angular.module('tickets.services.sync', [])
     .factory('App.Sync', ['App.Settings', '$http', 'PubSub', function (settings, $http, PubSub) {
         return {
+            autoTimeout: null,
             startBackgroundSync: function () {
+                if (this.autoTimeout) {
+                    clearTimeout(this.autoTimeout);
+                }
+                if (!settings.remote.interval) {
+                    return;
+                }
+
                 var _this = this;
                 function wrapSync() {
                     _this.syncRemote(function () {
-                        setTimeout(wrapSync, 60000);
+                        _this.autoTimeout = setTimeout(wrapSync, settings.remote.interval * 60000);
                     });
                 }
                 wrapSync();
@@ -15,7 +23,6 @@ angular.module('tickets.services.sync', [])
                 if (!settings.remote.url || !settings.remote.login || !settings.remote.password) {
                     return callback();
                 }
-                console.log('syncing...');
                 var hasChanges = false;
                 async.waterfall([
                     function (cb) {
@@ -90,10 +97,8 @@ angular.module('tickets.services.sync', [])
                         return callback(err);
                     }
                     if (hasChanges) {
-                        console.log('sync completed - updating');
+                        console.log('Sync completed - updating');
                         PubSub.publish('sync-update');
-                    } else {
-                        console.log('sync completed - no updates');
                     }
                     callback();
                 });

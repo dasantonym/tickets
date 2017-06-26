@@ -91,20 +91,21 @@
 
             function wrapUpdates() {
                 updateList(function () {
-                    setTimeout(wrapUpdates, 2000);
+                    setTimeout(wrapUpdates, 5000);
                 });
             }
 
             wrapUpdates();
 
-            //PubSub.subscribe('sync-update', updateList);
+            PubSub.subscribe('sync-update', updateList);
             //PubSub.subscribe('void-update', updateList);
         }])
-        .controller('Tickets.Sync', ['$scope', '$q', 'App.Settings', function ($scope, $q, settings) {
+        .controller('Tickets.Sync', ['$scope', '$q', 'App.Settings', 'App.Sync', function ($scope, $q, settings, sync) {
             $scope.remote = {
                 url: settings.remote.url,
                 login: settings.remote.login,
-                password: settings.remote.password
+                password: settings.remote.password,
+                interval: settings.remote.interval || 0
             };
 
             $scope.local = {
@@ -115,7 +116,9 @@
                 var deferred = $q.defer();
                 $scope.promiseString = 'Saving...';
                 $scope.promise = deferred.promise;
-                settings.storeRemote($scope.remote.url, $scope.remote.login, $scope.remote.password);
+                settings.storeRemote(
+                    $scope.remote.url, $scope.remote.login, $scope.remote.password, $scope.remote.interval);
+                sync.startBackgroundSync();
                 $scope.alerts = [
                     {
                         type: 'success',
@@ -134,6 +137,56 @@
                     {
                         type: 'success',
                         msg: 'Push settings saved'
+                    }
+                ];
+                deferred.resolve();
+            };
+        }])
+        .controller('Tickets.Backup', ['$scope', '$q', 'App.Settings', 'App.Backup', function ($scope, $q, settings, backup) {
+            $scope.backup = {
+                backupInterval: settings.backup.backupInterval || 0,
+                autoBackupPath: settings.backup.autoBackupPath,
+                backupPath: undefined,
+                restorePath: undefined
+            };
+
+            $scope.submitSettings = function () {
+                var deferred = $q.defer();
+                $scope.promiseString = 'Saving...';
+                $scope.promise = deferred.promise;
+                settings.storeBackup($scope.backup.backupInterval, $scope.backup.autoBackupPath);
+                $scope.alerts = [
+                    {
+                        type: 'success',
+                        msg: 'Backup settings saved'
+                    }
+                ];
+                deferred.resolve();
+            };
+
+            $scope.submitCreate = function () {
+                var deferred = $q.defer();
+                $scope.promiseString = 'Backing up...';
+                $scope.promise = deferred.promise;
+
+                $scope.alerts = [
+                    {
+                        type: 'success',
+                        msg: 'Backup successfully saved'
+                    }
+                ];
+                deferred.resolve();
+            };
+
+            $scope.submitRestore = function () {
+                var deferred = $q.defer();
+                $scope.promiseString = 'Restoring backup...';
+                $scope.promise = deferred.promise;
+
+                $scope.alerts = [
+                    {
+                        type: 'success',
+                        msg: 'Backup successfully restored'
                     }
                 ];
                 deferred.resolve();

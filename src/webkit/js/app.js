@@ -8,8 +8,10 @@
         'tickets.controllers.tickets',
         'tickets.services.settings',
         'tickets.services.sync',
+        'tickets.services.socket',
+        'tickets.services.backup',
         'tickets.directives.ioloader',
-        'tickets.services.socket'
+        'tickets.directives.utils'
     ])
     .config(['$routeProvider', '$locationProvider', '$logProvider', '$compileProvider', function ($routeProvider, $locationProvider, $logProvider, $compileProvider) {
         $logProvider.debugEnabled(true);
@@ -19,6 +21,7 @@
         $routeProvider.eagerInstantiationEnabled(true);
         $routeProvider.when('/list', {templateUrl: partialsPath + 'tickets_list.html', controller: 'Tickets.List'});
         $routeProvider.when('/sync', {templateUrl: partialsPath + 'sync.html', controller: 'Tickets.Sync'});
+        $routeProvider.when('/backup', {templateUrl: partialsPath + 'backup.html', controller: 'Tickets.Backup'});
 
         $routeProvider.otherwise({redirectTo: '/list'});
 
