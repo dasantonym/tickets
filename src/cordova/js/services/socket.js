@@ -5,9 +5,9 @@ angular.module('tickets.services.socket', [])
             socketCallback: null,
             setSocket: function (socket) {
                 this.socket = socket;
-                this.socket.on('ticket.void', function (ticket_key) {
+                this.socket.on('ticket.void', function (token) {
                     if (typeof this.socketCallback === 'function') {
-                        this.socketCallback(ticket_key);
+                        this.socketCallback(token);
                     }
                 });
             },
@@ -16,9 +16,9 @@ angular.module('tickets.services.socket', [])
                     this.socketCallback = callback;
                 }
             },
-            sendTicketVoid: function (ticket_key) {
+            sendTicketVoid: function (token) {
                 if (this.socket) {
-                    this.socket.emit('ticket.void', ticket_key);
+                    this.socket.emit('ticket.void', token);
                 }
             }
         }

@@ -3,18 +3,17 @@ angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.So
         var filetag = document.createElement('script');
         filetag.setAttribute("type", "text/javascript");
         filetag.setAttribute("src", file);
-        if (typeof filetag != "undefined") {
+        if (typeof filetag !== "undefined") {
             document.getElementsByTagName("head")[0].appendChild(filetag);
         }
     }
     function pollSocket(ipAdress) {
-        console.log(typeof io);
         window.setTimeout(function () {
             if (typeof io === 'function') {
                 var socket = io("http://" + ipAdress + ":7777");
                 appSocket.setSocket(socket);
-                appSocket.setSocketCallback(function (ticket_key) {
-                    console.log('void', ticket_key);
+                appSocket.setSocketCallback(function (token) {
+                    console.log('void', token);
                 });
                 console.log('connected socket');
             } else {

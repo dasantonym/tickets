@@ -4,18 +4,24 @@ h3 Tickets
     .panel-body
         form.form.form-horizontal
             input.col-sm-12.form-control(placeholder='Search tickets', ng-model='filter.query')
-table.table.table-condensed.table-hover.table-striped
+table.table.table-responsive.table-condensed.table-hover.table-striped
     tbody
         tr
             th Name
             th Email
-            th.hidden-xs Key
+            th Order-Nr.
+            th Type
+            th Category
+            th.hidden-xs Token
             th.text-right.hidden-xs.hidden-md Status
             th
-        tr(ng-repeat='ticket in tickets', ng-class='{ success: ticket.isVoid }', ng-if='!ticket.hideEntry')
+        tr(ng-repeat='ticket in tickets', ng-class='{ success: ticket.void }', ng-if='!ticket.hideEntry')
             td {{ ticket.firstname + ' ' + ticket.lastname }}
             td {{ ticket.email }}
-            td.hidden-xs {{ ticket.ticket_key }}
-            td.text-right.hidden-xs.hidden-md {{ ticket.isVoid ? 'VOID' : 'UNCLAIMED' }}
-            td
-                a.btn.btn-success(ng-if='!ticket.isVoid', ng-click='claimTicket(ticket)') CLAIM
+            td {{ ticket.order_number }}
+            td {{ ticket.type }}
+            td {{ ticket.category }}
+            td.hidden-xs {{ ticket.token }}
+            td.text-right.hidden-xs.hidden-md {{ ticket.void ? 'VOID' : 'UNCLAIMED' }}
+            td.text-right
+                button.btn.btn-xs.btn-default(ng-if='!ticket.void', ng-click='claimTicket(ticket)') CLAIM

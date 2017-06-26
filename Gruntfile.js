@@ -124,8 +124,8 @@ module.exports = function (grunt) {
                 root: 'dist/cordova',
                 cli: 'cordova',
                 cleanBeforeBuild: true,
-                plugins: ['https://github.com/phonegap/phonegap-plugin-barcodescanner.git'],
-                platforms: ['android','ios'],
+                plugins: ['phonegap-plugin-barcodescanner'],
+                platforms: ['ios'],
                 permissions: ['CAMERA','FLASHLIGHT','INTERNET'],
                 verbose: true,
                 debuggable: true,
@@ -169,9 +169,10 @@ module.exports = function (grunt) {
                 options: {
                     platforms: ['osx64','win64'],
                     buildDir: './releases/webkit',
-                    version: '0.21.0',
+                    version: '0.21.6',
                     macPlist: {
-                        'NSHumanReadableCopyright': "2015 Asdf Ghjkl"
+                        'NSHumanReadableCopyright': '2015 Asdf Ghjkl',
+                        'NSCameraUsageDescription': 'To scan barcodes.'
                     }
                 },
                 src: ['./dist/webkit/**/*']

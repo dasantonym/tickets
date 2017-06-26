@@ -7,8 +7,9 @@
                 cordova.plugins.barcodeScanner.scan(
                     function (res) {
                         if (!res.cancelled) {
+                            console.log(res.text, 'http://' + appSettings.remote.ip + ':9999/api/tickets/void.json?' + res.text);
                             var req = new XMLHttpRequest();
-                            req.open('GET', 'http://' + appSettings.remote.ip + ':9999/api/v1/ticket_void.json?' + res.text, true);
+                            req.open('GET', 'http://' + appSettings.remote.ip + ':9999/api/tickets/void.json?' + res.text, true);
                             req.setRequestHeader('Content-Type', 'application/json');
                             req.onreadystatechange = function () {
                                 if (req.readyState === 4) {
@@ -76,7 +77,7 @@
                 ];
             };
         }])
-        .controller('Tickets.List', ['$scope', '$q', '$routeParams', function ($scope, $q, $routeParams) {
+        .controller('Tickets.List', ['$scope', '$q', '$routeParams', 'App.Settings', function ($scope, $q, $routeParams, appSettings) {
             $scope.tickets = [];
             $scope.filter = {
                 query: null
@@ -95,7 +96,7 @@
             });
 
             var req = new XMLHttpRequest();
-            req.open('GET', 'http://192.168.1.25:9999/api/v1/electronic_tickets.json', true);
+            req.open('GET', 'http://' + appSettings.remote.ip + ':9999/api/tickets/all.json', true);
             req.setRequestHeader('Content-Type', 'application/json');
             req.onreadystatechange = function () {
                 if (req.readyState === 4) {

@@ -3,7 +3,7 @@
     var require = global.require;
     angular.module(
         'tickets.controllers.tickets', [])
-        .controller('Tickets.List', ['$scope', '$q', '$routeParams', function ($scope, $q, $routeParams) {
+        .controller('Tickets.List', ['$scope', '$q', function ($scope, $q) {
             var db = require('lib-local/db.js');
             var deferred = $q.defer();
 
@@ -12,17 +12,24 @@
 
             $scope.tickets = [];
             $scope.filter = {
-                query: null
+                query: undefined
             };
 
             $scope.$watch('filter.query', function (query) {
                 async.each($scope.tickets, function (ticket, next) {
-                    var contents = [ticket.firstname.toLowerCase, ticket.lastname.toLowerCase(), ticket.email.toLowerCase(), ticket.token].join(' ');
+                    var contents = [
+                        ticket.firstname ? ticket.firstname.toLowerCase() : '',
+                        ticket.lastname ? ticket.lastname.toLowerCase() : '',
+                        ticket.order_number ? ticket.order_number.toLowerCase() : '',
+                        ticket.token
+                    ].join(' ');
+
                     if (contents.indexOf(query.toLowerCase()) < 0) {
                         $scope.tickets[$scope.tickets.indexOf(ticket)].hideEntry = true;
                     } else {
                         $scope.tickets[$scope.tickets.indexOf(ticket)].hideEntry = false;
                     }
+
                     next();
                 });
             });
@@ -30,11 +37,10 @@
             $scope.claimTicket = function (ticket) {
                 if (window.confirm('Are you sure you are claiming the right ticket ' + ticket.token + ' (' + [ticket.firstname, ticket.lastname].join(' ') + ')?')) {
                     delete ticket['$$hashKey'];
-                    console.log(ticket);
-                    ticket.isVoid = true;
+                    ticket.void = true;
+                    ticket.void_at = new Date();
                     db.update(ticket, ticket.token, function (err) {
                         if (err) {
-                            console.log(err);
                             $scope.alerts = [
                                 {
                                     type: 'danger',
@@ -68,8 +74,9 @@
                             $scope.tickets = tickets;
                         } else {
                             for (var i in tickets) {
-                                if (!$scope.tickets[i].isVoid && tickets[i].isVoid) {
-                                    $scope.tickets[i].isVoid = tickets[i].isVoid;
+                                if (!$scope.tickets[i].void && tickets[i].void) {
+                                    $scope.tickets[i].void = tickets[i].void;
+                                    $scope.tickets[i].void_at = tickets[i].void_at;
                                 }
                             }
                         }
@@ -93,7 +100,6 @@
             $scope.submit = function () {
                 var deferred = $q.defer();
                 var db = require('lib-local/db.js');
-                var request = require('request');
 
                 $scope.promiseString = 'Syncing...';
                 $scope.promise = deferred.promise;
