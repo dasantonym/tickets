@@ -3,8 +3,8 @@
     var require = global.require;
     angular.module(
         'tickets.controllers.tickets', [])
-        .controller('Tickets.List', ['$scope', '$q', 'PubSub', function ($scope, $q, PubSub) {
-            var db = require('lib-local/db.js');
+        .controller('Tickets.List', ['$scope', '$q', 'PubSub', 'App.Stats', function ($scope, $q, PubSub, stats) {
+            var db = require('lib-local/db');
 
             $scope.tickets = [];
             $scope.filter = {
@@ -40,10 +40,12 @@
                     ticket.void_at = new Date();
                     db.update(ticket, ticket.token, function (err) {
                         if (err) {
-                            $scope.alerts = [{
-                                type: 'danger',
-                                msg: err.message
-                            }];
+                            $scope.alerts = [
+                                {
+                                    type: 'danger',
+                                    msg: err.message
+                                }
+                            ];
                         }
                         $scope.$apply();
                     });
@@ -51,6 +53,7 @@
             };
 
             var updateList = function (callback) {
+                var tickets_valid = 0, tickets_void = 0;
                 db.find({}, function (err, tickets) {
                     tickets.sort(function compare(a, b) {
                         if (a.lastname < b.lastname)
@@ -65,8 +68,8 @@
                             msg: err.message
                         }];
                     } else {
+                        /*
                         if ($scope.tickets.length === 0) {
-                            $scope.tickets = tickets;
                         } else {
                             for (var i in tickets) {
                                 if (!$scope.tickets[i].void && tickets[i].void) {
@@ -75,7 +78,15 @@
                                 }
                             }
                         }
+                         */
+                        $scope.tickets = tickets;
+                        $scope.tickets.forEach(function (ticket) {
+                            tickets_void += ticket.void ? 1 : 0;
+                            tickets_valid += ticket.valid ? 1 : 0;
+                            return ticket;
+                        });
                     }
+                    stats.storeStats(null, null, null, $scope.tickets.length, null, tickets_valid, tickets_void);
                     deferred.resolve();
                     $scope.$apply();
                     if (typeof callback === 'function') {

@@ -11,10 +11,6 @@ angular.module('tickets.services.settings', [])
                 url: localStorage["push.url"],
                 backoff: localStorage["push.backoff"] || 0
             },
-            stats: {
-                last_sync: localStorage["stats.last_sync"],
-                last_push: localStorage["stats.last_push"]
-            },
             backup: {
                 backupInterval: localStorage["backup.backupInterval"],
                 autoBackupPath: localStorage["backup.autoBackupPath"]
@@ -34,12 +30,6 @@ angular.module('tickets.services.settings', [])
                 this.push.backoff = backoff;
                 localStorage["push.url"] = this.push.url;
                 localStorage["push.backoff"] = this.push.backoff;
-            },
-            storeStats: function (last_sync, last_push) {
-                this.stats.last_sync = last_sync;
-                this.stats.last_push = last_push;
-                localStorage["stats.last_sync"] = this.stats.last_sync;
-                localStorage["stats.last_push"] = this.stats.last_push;
             },
             storeBackup: function (backupInterval, autoBackupPath) {
                 this.backup.backupInterval = backupInterval;

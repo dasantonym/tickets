@@ -28,6 +28,38 @@ html(ng-app='ticket-server')
                                 a(ng-click="goto('/sync')") Sync
                             li
                                 a(ng-click="goto('/backup')") Backup
+                        ul.nav.navbar-nav.navbar-right(display-stats)
+                            p.navbar-text
+                                span.small.text-muted Sync
+                                br
+                                span(ng-if="stats.last_sync") {{ stats.last_sync | date:'HH:mm' }}
+                                span(ng-if="!stats.last_sync") --:--
+                            p.navbar-text
+                                span.small.text-muted Push
+                                br
+                                span(ng-if="stats.last_push") {{ stats.last_push | date:'HH:mm' }}
+                                span(ng-if="!stats.last_push") --:--
+                            p.navbar-text
+                                span.small.text-muted Tickets
+                                br
+                                span {{ stats.tickets || 0 }}
+                            p.navbar-text
+                                span.small.text-muted Valid
+                                br
+                                span {{ stats.tickets_valid || 0 }}
+                            p.navbar-text
+                                span.small.text-muted Void
+                                br
+                                span {{ stats.tickets_void || 0 }}
+                            p.navbar-text
+                                span.small.text-muted Pending
+                                br
+                                span {{ stats.pending || 0 }}
+                            p.navbar-text
+                                span.small.text-muted Status
+                                br
+                                span.text-success(ng-if="stats.reachability === true") API
+                                span.text-danger(ng-if="stats.reachability === false") API
             .row-fluid
                 .col-md-12.main-content
                     div(ng-view, cg-busy="{promise:promise,message:promiseString,templateUrl:'./partials/busy.html'}")

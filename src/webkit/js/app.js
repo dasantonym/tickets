@@ -8,9 +8,11 @@
         'ngFileUpload',
         'tickets.controllers.tickets',
         'tickets.services.settings',
+        'tickets.services.stats',
         'tickets.services.sync',
         'tickets.services.socket',
         'tickets.services.backup',
+        'tickets.directives.stats',
         'tickets.directives.ioloader',
         'tickets.directives.utils'
     ])

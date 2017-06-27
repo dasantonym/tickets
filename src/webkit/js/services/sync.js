@@ -1,5 +1,5 @@
 angular.module('tickets.services.sync', [])
-    .factory('App.Sync', ['App.Settings', '$http', 'PubSub', function (settings, $http, PubSub) {
+    .factory('App.Sync', ['App.Settings', '$http', 'PubSub', 'App.Stats', function (settings, $http, PubSub, stats) {
         return {
             autoTimeout: null,
             pushTimeout: null,
@@ -53,17 +53,21 @@ angular.module('tickets.services.sync', [])
                                 password: settings.remote.password
                             }
                         }).then(function successCallback(response) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, response);
                         }, function errorCallback(response) {
+                            stats.storeStats(null, null, false, null, null);
                             cb(null, response);
                         });
                     },
                     function (res, cb) {
                         if (res.status === 200) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, res.data.token);
                         } else if (res.status === 403) {
                             cb(new Error('Access Denied'), null);
                         } else {
+                            stats.storeStats(null, null, false, null, null);
                             cb(new Error('Unknown error: HTTP status ' + res.status), null);
                         }
                     },
@@ -75,17 +79,21 @@ angular.module('tickets.services.sync', [])
                                 'X-Authentication': token
                             }
                         }).then(function successCallback(response) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, response);
                         }, function errorCallback(response) {
+                            stats.storeStats(null, null, false, null, null);
                             cb(null, response);
                         });
                     },
                     function (res, cb) {
                         if (res.status === 200) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, res.data);
                         } else if (res.status === 403) {
                             cb(new Error('Access Denied'), null);
                         } else {
+                            stats.storeStats(null, null, false, null, null);
                             cb(new Error('Unknown error: HTTP status ' + res.status), null);
                         }
                     },
@@ -117,9 +125,11 @@ angular.module('tickets.services.sync', [])
                     }
                 ], function (err) {
                     if (err) {
+                        stats.storeStats(null, null, false, null, null);
                         console.log('Sync failed with error: ' + err.message);
                         return callback(err);
                     }
+                    stats.storeStats(new Date(), null, true, null, null);
                     if (hasChanges) {
                         console.log('Sync completed - updating');
                         PubSub.publish('sync-update');
@@ -143,17 +153,21 @@ angular.module('tickets.services.sync', [])
                                 password: settings.remote.password
                             }
                         }).then(function successCallback(response) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, response);
                         }, function errorCallback(response) {
+                            stats.storeStats(null, null, false, null, null);
                             cb(null, response);
                         });
                     },
                     function (res, cb) {
                         if (res.status === 200) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, res.data.token);
                         } else if (res.status === 403) {
                             cb(new Error('Access Denied'), null);
                         } else {
+                            stats.storeStats(null, null, false, null, null);
                             cb(new Error('Unknown error: HTTP status ' + res.status), null);
                         }
                     },
@@ -165,17 +179,21 @@ angular.module('tickets.services.sync', [])
                                 'X-Authentication': token
                             }
                         }).then(function successCallback(response) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, response);
                         }, function errorCallback(response) {
+                            stats.storeStats(null, null, false, null, null);
                             cb(null, response);
                         });
                     },
                     function (res, cb) {
                         if (res.status === 200) {
+                            stats.storeStats(null, null, true, null, null);
                             cb(null, res.data);
                         } else if (res.status === 403) {
                             cb(new Error('Access Denied'), null);
                         } else {
+                            stats.storeStats(null, null, false, null, null);
                             cb(new Error('Unknown error: HTTP status ' + res.status), null);
                         }
                     },
@@ -202,9 +220,11 @@ angular.module('tickets.services.sync', [])
                     }
                 ], function (err) {
                     if (err) {
+                        stats.storeStats(null, null, false, null, null);
                         console.log('Sync orders failed with error: ' + err.message);
                         return callback(err);
                     }
+                    stats.storeStats(null, null, true, null, null);
                     if (hasChanges) {
                         console.log('Sync orders completed - updating');
                         PubSub.publish('sync-update');
@@ -223,6 +243,7 @@ angular.module('tickets.services.sync', [])
                         sync.pendingUpdates(cb);
                     },
                     function (updates, cb) {
+                        stats.storeStats(null, null, null, null, updates.length);
                         async.eachSeries(updates, function (update, next) {
                             async.waterfall([
                                 function (cb) {
@@ -254,9 +275,11 @@ angular.module('tickets.services.sync', [])
                     }
                 ], function (err) {
                     if (err) {
+                        stats.storeStats(null, null, false, null, null);
                         console.log('Push failed with error: ' + err.message);
                         return callback(err);
                     }
+                    stats.storeStats(null, new Date(), true, null, null);
                     callback();
                 });
             }

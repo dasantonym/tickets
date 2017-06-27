@@ -2,6 +2,8 @@
     .col-sm-12
         .btn.btn-primary.btn-lg.btn-scan.text-large(role='button', type='button', ng-click='scan()') SCAN
     .clearfix
+    .col-sm-12
+        p.text-center.small {{ settings.remote.ip }}
 
 .row-fluid.pad-top(ng-if='alerts && alerts.length !== 0')
     .panel(ng-repeat='alert in alerts', class='{{ "panel-" + alert.type }}')

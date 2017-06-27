@@ -42,7 +42,7 @@ h3.page-header Backup
                         ng-model='backup.backupInterval', string-to-number, required)
                 .col-md-4.form-group
                     label.control-label Destination Folder
-                    p.small {{ backup.autoBackupPath || '' }}
+                    p.small {{ backup.autoBackupPath || 'None set' }}
                     input.input.form-control(name='autoBackupPath', type='file',
                         ngf-select="onFileSelect($files, 'autoBackupPath')", nwdirectory)
             .panel-footer.text-right
