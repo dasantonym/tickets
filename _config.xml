@@ -14,5 +14,7 @@
     <preference name="fullscreen"       value="false" />
     <preference name="permissions"      value="none"/>
 
+    <splash src="www/assets/Default@2x~universal~anyany.png" />
+
     <access origin="*" />
 </widget>

@@ -129,7 +129,11 @@ module.exports = function (grunt) {
                 root: 'dist/cordova',
                 cli: 'cordova',
                 cleanBeforeBuild: true,
-                plugins: ['phonegap-plugin-barcodescanner','cordova-plugin-statusbar'],
+                plugins: [
+                    'phonegap-plugin-barcodescanner',
+                    'cordova-plugin-statusbar',
+                    'cordova-plugin-splashscreen'
+                ],
                 platforms: ['ios'],
                 permissions: ['CAMERA','FLASHLIGHT','INTERNET'],
                 verbose: true,
@@ -143,14 +147,14 @@ module.exports = function (grunt) {
                 config: {
                     template: '_config.xml',
                     data: {
-                        id: 'de.htmhell.ticketscanner',
+                        id: 'com.microdwarf.nondescript.ticketsoftware',
                         version: '<%= pkg.version %>',
                         name: '<%= pkg.name %>',
                         description: '<%= pkg.description %>',
                         author: {
-                            email: 'antonymousfeedback@gmail.com',
-                            href: '',
-                            text: 'Anton'
+                            email: 'info@nervenzwerge.com',
+                            href: 'http://nervenzwerge.com',
+                            text: 'Microdwarf Inc.'
                         }
                     }
                 },
@@ -176,9 +180,11 @@ module.exports = function (grunt) {
                     buildDir: './releases/webkit',
                     version: '0.21.6',
                     macPlist: {
-                        'NSHumanReadableCopyright': '2015 Asdf Ghjkl',
+                        'NSHumanReadableCopyright': '1982 MicroDwarf Inc.',
                         'NSCameraUsageDescription': 'To scan barcodes.'
-                    }
+                    },
+                    macIcns: './dist/webkit/assets/mdi-ndts-icon.icns',
+                    winIco: './dist/webkit/assets/mdi-ndts-icon.ico'
                 },
                 src: ['./dist/webkit/**/*']
             }

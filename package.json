@@ -1,10 +1,14 @@
 {
-  "name": "tickets",
+  "name": "NondescriptTicketSoftware",
   "description": "Nondescript Ticket Software",
   "homepage": "https://github.com/dasantonym/tickets",
   "author": {
-    "name": "Anton",
-    "email": "antonymousfeedback@gmail.com"
+    "name": "Microdwarf Inc.",
+    "email": "info@nervenzwerge.com"
+  },
+  "scripts": {
+    "icons": "../node_modules/.bin/cordova-icon --config=config.xml --icon=../dist/cordova/assets/mdi-ndts-icon.png",
+    "copy-www": "rm -r ./build/www && cp -rp ./dist/cordova ./build/www"
   },
   "repository": {
     "type": "git",
@@ -29,5 +33,8 @@
     "grunt-exec": "^0.4.6",
     "grunt-nw-builder": "^3.1.0",
     "grunt-phonegap": "~0.15.3"
+  },
+  "dependencies": {
+    "cordova-icon": "^0.9.1"
   }
 }
