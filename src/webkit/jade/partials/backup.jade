@@ -1,6 +1,6 @@
 h3.page-header Backup
 
-.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}',
+.alert.alert-dismissable(uib-alert, dismiss-on-timeout="6000", ng-repeat='alert in alerts', type='{{alert.type}}',
     class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
 
 .col-md-6

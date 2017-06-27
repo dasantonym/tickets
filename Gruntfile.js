@@ -124,6 +124,20 @@ module.exports = function (grunt) {
                 dest: 'dist/webkit/approot/js/tickets-deps.min.js'
             }
         },
+        copy: {
+            webkit: {
+                expand: true,
+                cwd: 'src/lib-local/',
+                src: '**',
+                dest: 'dist/webkit/node_modules/lib-local/'
+            },
+            cordova: {
+                expand: true,
+                cwd: 'dist/cordova/',
+                src: '**',
+                dest: 'build/www/'
+            }
+        },
         phonegap: {
             config: {
                 root: 'dist/cordova',
@@ -189,26 +203,10 @@ module.exports = function (grunt) {
                 src: ['./dist/webkit/**/*']
             }
         },
-        connect: {
-            options: {
-                hostname: 'localhost',
-                livereload: 35729,
-                port: 4444
-            },
-            cordova: {
-                options: {
-                    base: 'dist/cordova',
-                    open: true
-                }
-            }
-        },
         exec: {
             webkit: '/Applications/nwjs.app/Contents/MacOS/nwjs ./dist/webkit &'
         },
         watch: {
-            options: {
-                livereload: '<%= connect.options.livereload %>'
-            },
             all: {
                 files: 'src/**/*',
                 tasks: ['default']
@@ -219,13 +217,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jade');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-phonegap');
     grunt.loadNpmTasks('grunt-nw-builder');
 
-    grunt.registerTask('default', ['less', 'jade', 'uglify', 'concat']);
-    grunt.registerTask('dev-cordova', ['connect:cordova', 'watch:all']);
-    grunt.registerTask('dev-webkit', ['exec:webkit', 'watch:all']);
+    grunt.registerTask('default', ['less', 'jade', 'uglify', 'concat', 'copy']);
+    grunt.registerTask('dev', ['watch:all']);
 };

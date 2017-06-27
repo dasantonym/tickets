@@ -3,7 +3,7 @@
         form.form.form-horizontal
             input.col-sm-12.form-control(placeholder='Search tickets', ng-model='filter.query')
 
-.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
+.alert.alert-dismissable(uib-alert, dismiss-on-timeout="6000", ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
 
 table.table.table-responsive.table-condensed.table-hover.table-striped
     tbody

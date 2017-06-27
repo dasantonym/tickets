@@ -12,7 +12,7 @@ html(ng-app='ticket-server')
         script global.require('lib-local/http')();
         link(rel='stylesheet', href='css/main.css')
     body(data-status="{{ status }}")
-        .container-fluid(cg-busy="{promise:pagePromise,message:'Loading page...',templateUrl:'./partials/busy.html',minDuration:100}")
+        .container-fluid(cg-busy="{promise:pagePromise,message:'Loading page...',templateUrl:'./partials/busy.html'}")
             .navbar.navbar-inverse.navbar-fixed-top(name='mainNavigation', role='navigation', check-login)
                 .container-fluid
                     .navbar-header
@@ -28,7 +28,7 @@ html(ng-app='ticket-server')
                                 a(ng-click="goto('/sync')") Sync
                             li
                                 a(ng-click="goto('/backup')") Backup
-            .container-fluid
-                .main-content
+            .row-fluid
+                .col-md-12.main-content
                     div(ng-view, cg-busy="{promise:promise,message:promiseString,templateUrl:'./partials/busy.html'}")
             io-loader(ip-address="127.0.0.1")

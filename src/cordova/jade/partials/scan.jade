@@ -15,4 +15,6 @@
                 li.list-group-item.text-large {{ alert.ticket.email }}
                 li.list-group-item.text-large {{ alert.ticket.type }}
                 li.list-group-item.text-large(ng-if='alert.ticket.category') {{ alert.ticket.category }}
+                li.list-group-item.text-large(ng-if='alert.ticket.order_amount_due && alert.ticket.order_amount_paid')
+                    | Paid €{{ alert.ticket.order_amount_paid.toFixed(2) }} of €{{ alert.ticket.order_amount_due.toFixed(2) }} (Full Order)
             button.btn.btn-default(ng-click='alerts.splice(0,1)') OK

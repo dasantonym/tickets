@@ -4,6 +4,7 @@ angular.module('tickets.services.backup', [])
         fs = require('fs-extra'),
         path = require('path'),
         db = require('lib-local/db'),
+        dbOrders = require('lib-local/db-orders'),
         sync = require('lib-local/sync');
     return {
         autoBackupTimeout: null,
@@ -43,6 +44,14 @@ angular.module('tickets.services.backup', [])
                     });
                 },
                 function (cb) {
+                    dbOrders.find({}, function (err, orders) {
+                        if (err) {
+                            return cb(err);
+                        }
+                        fs.writeFile(path.join(destination, 'orders.json'), JSON.stringify(orders), cb);
+                    });
+                },
+                function (cb) {
                     sync.pendingUpdates(function (err, updates) {
                         if (err) {
                             return cb(err);
@@ -79,6 +88,22 @@ angular.module('tickets.services.backup', [])
                     var tickets = JSON.parse(data);
                     async.eachSeries(tickets, function (ticket, next) {
                         db.create(ticket, function (err) {
+                            next(err);
+                        });
+                    }, function (err) {
+                        cb(err);
+                    });
+                },
+                function (cb) {
+                    dbOrders.empty(cb);
+                },
+                function (cb) {
+                    fs.readFile(path.join(source, 'orders.json'), cb);
+                },
+                function (data, cb) {
+                    var orders = JSON.parse(data);
+                    async.eachSeries(orders, function (ticket, next) {
+                        dbOrders.create(order, function (err) {
                             next(err);
                         });
                     }, function (err) {

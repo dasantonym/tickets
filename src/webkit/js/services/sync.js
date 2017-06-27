@@ -13,8 +13,10 @@ angular.module('tickets.services.sync', [])
 
                 var _this = this;
                 function wrapSync() {
-                    _this.syncRemote(function () {
-                        _this.autoTimeout = setTimeout(wrapSync, settings.remote.interval * 60000);
+                    _this.syncRemoteTickets(function () {
+                        _this.syncRemoteOrders(function () {
+                            _this.autoTimeout = setTimeout(wrapSync, settings.remote.interval * 60000);
+                        });
                     });
                 }
                 wrapSync();
@@ -35,7 +37,7 @@ angular.module('tickets.services.sync', [])
                 }
                 wrapPush();
             },
-            syncRemote: function (callback) {
+            syncRemoteTickets: function (callback) {
                 var db = require('lib-local/db.js');
                 if (!settings.remote.url || !settings.remote.login || !settings.remote.password) {
                     return callback();
@@ -102,12 +104,12 @@ angular.module('tickets.services.sync', [])
                                     }
                                 }
                             ], function (err) {
-                                if (err) {
+                                if (err || !settings.push.url) {
                                     return next(err);
                                 }
-                                if (settings.push.url) {
-                                    sync.addPendingUpdate(ticket.uuid, ticket, next);
-                                }
+                                sync.addPendingUpdate(ticket.uuid, ticket, function (err) {
+                                    next(err);
+                                });
                             });
                         }, function (err) {
                             cb(err);
@@ -120,6 +122,91 @@ angular.module('tickets.services.sync', [])
                     }
                     if (hasChanges) {
                         console.log('Sync completed - updating');
+                        PubSub.publish('sync-update');
+                    }
+                    callback();
+                });
+            },
+            syncRemoteOrders: function (callback) {
+                var dbOrders = require('lib-local/db-orders.js');
+                if (!settings.remote.url || !settings.remote.login || !settings.remote.password) {
+                    return callback();
+                }
+                var hasChanges = false;
+                async.waterfall([
+                    function (cb) {
+                        $http({
+                            url: settings.remote.url + '/api/access_tokens.json',
+                            method: 'POST',
+                            data: {
+                                email: settings.remote.login,
+                                password: settings.remote.password
+                            }
+                        }).then(function successCallback(response) {
+                            cb(null, response);
+                        }, function errorCallback(response) {
+                            cb(null, response);
+                        });
+                    },
+                    function (res, cb) {
+                        if (res.status === 200) {
+                            cb(null, res.data.token);
+                        } else if (res.status === 403) {
+                            cb(new Error('Access Denied'), null);
+                        } else {
+                            cb(new Error('Unknown error: HTTP status ' + res.status), null);
+                        }
+                    },
+                    function (token, cb) {
+                        $http({
+                            url: settings.remote.url + '/api/data/dump/orders.json',
+                            method: 'GET',
+                            headers: {
+                                'X-Authentication': token
+                            }
+                        }).then(function successCallback(response) {
+                            cb(null, response);
+                        }, function errorCallback(response) {
+                            cb(null, response);
+                        });
+                    },
+                    function (res, cb) {
+                        if (res.status === 200) {
+                            cb(null, res.data);
+                        } else if (res.status === 403) {
+                            cb(new Error('Access Denied'), null);
+                        } else {
+                            cb(new Error('Unknown error: HTTP status ' + res.status), null);
+                        }
+                    },
+                    function (orders, cb) {
+                        async.eachSeries(orders, function (order, next) {
+                            async.waterfall([
+                                function (cb) {
+                                    dbOrders.findOne({uuid: order.uuid}, cb);
+                                },
+                                function (existing_order, cb) {
+                                    if (existing_order) {
+                                        cb(null, existing_order);
+                                    } else {
+                                        hasChanges = true;
+                                        dbOrders.create(order, cb);
+                                    }
+                                }
+                            ], function (err) {
+                                next(err);
+                            });
+                        }, function (err) {
+                            cb(err);
+                        });
+                    }
+                ], function (err) {
+                    if (err) {
+                        console.log('Sync orders failed with error: ' + err.message);
+                        return callback(err);
+                    }
+                    if (hasChanges) {
+                        console.log('Sync orders completed - updating');
                         PubSub.publish('sync-update');
                     }
                     callback();
@@ -144,7 +231,7 @@ angular.module('tickets.services.sync', [])
                                         url: settings.push.url + '/api/tickets/push.json',
                                         data: update
                                     }).then(function success(response) {
-                                        if (response.status === 200) {
+                                        if (response.status === 200 || response.status === 201) {
                                             sync.remove(update, update._id, cb);
                                         } else {
                                             if (response.status === 400) {

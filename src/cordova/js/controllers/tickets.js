@@ -28,15 +28,27 @@
                                             $scope.alerts = [
                                                 {
                                                     type: 'danger',
-                                                    msg: response.error
+                                                    msg: response.error,
+                                                    ticket: response.ticket
                                                 }
                                             ];
                                         }
                                     } else {
+                                        var msg;
+                                        switch (req.status) {
+                                            case 0:
+                                                msg = 'No connection to server';
+                                                break;
+                                            case 404:
+                                                msg = 'Ticket unknown';
+                                                break;
+                                            default:
+                                                msg = 'Request failed with status ' + req.status
+                                        }
                                         $scope.alerts = [
                                             {
                                                 type: 'danger',
-                                                msg: 'Server connection failed with status: ' + req.status
+                                                msg: msg
                                             }
                                         ];
                                         console.log({

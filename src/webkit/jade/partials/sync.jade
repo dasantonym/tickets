@@ -1,6 +1,6 @@
 h3.page-header Sync
 
-.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
+.alert.alert-dismissable(uib-alert, dismiss-on-timeout="6000", ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
 
 form.col-md-6(name='syncForm', role='form', ng-submit='submitSync()')
     .panel.panel-default

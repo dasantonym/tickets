@@ -5,6 +5,5 @@ releases/
 bower_components/
 cache/
 !.gitkeep
-!**/node_modules/lib-local
 .DS_Store
 *.keystore
