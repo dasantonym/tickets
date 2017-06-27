@@ -1,6 +1,7 @@
 h3.page-header Backup
 
-.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}', class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
+.alert.alert-dismissable(ng-repeat='alert in alerts', type='{{alert.type}}',
+    class="{{ 'alert-' + alert.type }}", close='closeAlert($index)') {{alert.msg}}
 
 .col-md-6
     form(name='createForm', role='form', ng-submit='submitCreate()')
@@ -11,7 +12,7 @@ h3.page-header Backup
                 .form-group
                     label.control-label Destination Folder
                     input.input.form-control(name='backupPath', type='file',
-                        ng-model='backup.backupPath', required, nwdirectory)
+                        ngf-select="onFileSelect($files, 'backupPath')", required, nwdirectory)
             .panel-footer.text-right
                 input.btn.btn-primary.btn(type='submit', value='Create')
 
@@ -24,7 +25,7 @@ h3.page-header Backup
                 .form-group
                     label.control-label Backup Folder
                     input.input.form-control(name='restorePath', type='file',
-                        ng-model='backup.restorePath', required, nwdirectory)
+                        ngf-select="onFileSelect($files, 'restorePath')", required, nwdirectory)
             .panel-footer.text-right
                 input.btn.btn-primary.btn(type='submit', value='Restore')
 
@@ -34,13 +35,15 @@ h3.page-header Backup
             .panel-heading
                 h3.panel-title Automatic Backup
             .panel-body
-                .col-md-6.form-group
-                    label.control-label Interval (minutes, 0 to turn off automatic backups)
+                .col-md-4.form-group
+                    label.control-label Interval
+                    p.small (Minutes, 0 to turn off automatic backups)
                     input.input.form-control(name='backupInterval', type='number',
-                    ng-model='backup.backupInterval', string-to-number, required)
-                .col-md-6.form-group
+                        ng-model='backup.backupInterval', string-to-number, required)
+                .col-md-4.form-group
                     label.control-label Destination Folder
+                    p.small {{ backup.autoBackupPath || '' }}
                     input.input.form-control(name='autoBackupPath', type='file',
-                    ng-model='backup.autoBackupPath', nwdirectory)
+                        ngf-select="onFileSelect($files, 'autoBackupPath')", nwdirectory)
             .panel-footer.text-right
                 input.btn.btn-primary.btn(type='submit', value='Save')

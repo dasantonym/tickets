@@ -40,12 +40,10 @@
                     ticket.void_at = new Date();
                     db.update(ticket, ticket.token, function (err) {
                         if (err) {
-                            $scope.alerts = [
-                                {
-                                    type: 'danger',
-                                    msg: err.message
-                                }
-                            ];
+                            $scope.alerts = [{
+                                type: 'danger',
+                                msg: err.message
+                            }];
                         }
                         $scope.$apply();
                     });
@@ -62,12 +60,10 @@
                         return 0;
                     });
                     if (err) {
-                        $scope.alerts = [
-                            {
-                                type: 'danger',
-                                msg: err.message
-                            }
-                        ];
+                        $scope.alerts = [{
+                            type: 'danger',
+                            msg: err.message
+                        }];
                     } else {
                         if ($scope.tickets.length === 0) {
                             $scope.tickets = tickets;
@@ -123,12 +119,10 @@
                 settings.storeRemote(
                     $scope.remote.url, $scope.remote.login, $scope.remote.password, $scope.remote.interval);
                 sync.startBackgroundSync();
-                $scope.alerts = [
-                    {
-                        type: 'success',
-                        msg: 'Sync settings saved'
-                    }
-                ];
+                $scope.alerts = [{
+                    type: 'success',
+                    msg: 'Sync settings saved'
+                }];
                 deferred.resolve();
             };
 
@@ -137,17 +131,15 @@
                 $scope.promiseString = 'Saving...';
                 $scope.promise = deferred.promise;
                 settings.storePush($scope.push.url, $scope.push.backoff);
-                $scope.alerts = [
-                    {
-                        type: 'success',
-                        msg: 'Push settings saved'
-                    }
-                ];
+                $scope.alerts = [{
+                    type: 'success',
+                    msg: 'Push settings saved'
+                }];
                 deferred.resolve();
             };
         }])
-        .controller('Tickets.Backup', ['$scope', '$q', 'App.Settings', 'App.Backup', 'Upload',
-                function ($scope, $q, settings, backup, Upload) {
+        .controller('Tickets.Backup', ['$scope', '$q', 'App.Settings', 'App.Backup',
+                function ($scope, $q, settings, backup) {
 
             $scope.backup = {
                 backupInterval: settings.backup.backupInterval || 0,
@@ -156,17 +148,24 @@
                 restorePath: undefined
             };
 
+            $scope.onFileSelect = function (files, prop) {
+                if (!Array.isArray(files) || files.length === 0) {
+                    return;
+                }
+                console.log(files);
+                $scope.backup[prop] = files[0].path;
+            };
+
             $scope.submitSettings = function () {
                 var deferred = $q.defer();
                 $scope.promiseString = 'Saving...';
                 $scope.promise = deferred.promise;
                 settings.storeBackup($scope.backup.backupInterval, $scope.backup.autoBackupPath);
-                $scope.alerts = [
-                    {
-                        type: 'success',
-                        msg: 'Backup settings saved'
-                    }
-                ];
+                backup.startBackgroundAutoBackup();
+                $scope.alerts = [{
+                    type: 'success',
+                    msg: 'Backup settings saved'
+                }];
                 deferred.resolve();
             };
 
@@ -174,45 +173,41 @@
                 var deferred = $q.defer();
                 $scope.promiseString = 'Backing up...';
                 $scope.promise = deferred.promise;
+                backup.save($scope.backup.backupPath, function (err) {
+                    if (err) {
+                        $scope.alerts = [{
+                            type: 'success',
+                            msg: 'Backup failed: ' + err.message
+                        }];
+                        return deferred.reject(err);
+                    }
 
-                $scope.alerts = [
-                    {
+                    $scope.alerts = [{
                         type: 'success',
                         msg: 'Backup successfully saved'
-                    }
-                ];
-                deferred.resolve();
+                    }];
+                    deferred.resolve();
+                });
             };
 
             $scope.submitRestore = function () {
                 var deferred = $q.defer();
                 $scope.promiseString = 'Restoring backup...';
                 $scope.promise = deferred.promise;
-
-                var fs = require('fs-extra');
-
-                return fs.readdir($scope.backup.restorePath)
-                    .then(function (entries) {
-
-                    })
-                    .then(function () {
-                        $scope.alerts = [
-                            {
-                                type: 'success',
-                                msg: 'Backup successfully restored'
-                            }
-                        ];
-                        deferred.resolve();
-                    })
-                    .catch(function (err) {
-                        $scope.alerts = [
-                            {
-                                type: 'error',
-                                msg: 'Backup restore failed: ' + err.message
-                            }
-                        ];
-                        deferred.reject(err);
-                    });
+                backup.restore($scope.backup.restorePath, function (err) {
+                    if (err) {
+                        $scope.alerts = [{
+                            type: 'error',
+                            msg: 'Backup restore failed: ' + err.message
+                        }];
+                        return deferred.reject(err);
+                    }
+                    $scope.alerts = [{
+                        type: 'success',
+                        msg: 'Backup successfully restored'
+                    }];
+                    deferred.resolve();
+                });
             };
         }]);
 })();

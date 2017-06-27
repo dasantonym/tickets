@@ -88,7 +88,7 @@ angular.module('tickets.services.sync', [])
                         }
                     },
                     function (tickets, cb) {
-                        async.each(tickets, function (ticket, next) {
+                        async.eachSeries(tickets, function (ticket, next) {
                             async.waterfall([
                                 function (cb) {
                                     db.findOne({token: ticket.token}, cb);

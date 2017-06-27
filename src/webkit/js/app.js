@@ -26,7 +26,7 @@
 
         $routeProvider.otherwise({redirectTo: '/list'});
 
-    }]).run(['$rootScope', '$q', '$location', 'App.Sync', function ($rootScope, $q, $location, appSync) {
+    }]).run(['$rootScope', '$q', '$location', 'App.Sync', 'App.Backup', function ($rootScope, $q, $location, appSync, appBackup) {
         $rootScope.goto = function (path) {
             $location.path(path);
         };
@@ -56,5 +56,6 @@
         socket.setup();
 
         appSync.startBackgroundSync();
+        appBackup.startBackgroundAutoBackup();
     }]);
 }());
