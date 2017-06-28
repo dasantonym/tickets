@@ -2,71 +2,96 @@
     'use strict';
     angular.module(
         'tickets.controllers.tickets', [])
-        .controller('Tickets.Scan', ['$scope', '$q', '$routeParams', 'App.Socket', 'App.Settings', function ($scope, $q, $routeParams, appSocket, appSettings) {
+        .controller('Tickets.Scan', ['$scope', '$q', '$routeParams', 'App.Socket', 'App.Settings', 'App.Heartbeat', '$http',
+                function ($scope, $q, $routeParams, appSocket, appSettings, appHeartbeat, $http) {
+
+            $scope.settings = appSettings;
+
+            $scope.heartbeat = appHeartbeat;
+            $scope.heartbeat.setup('http://' + appSettings.remote.ip + ':9999/api/heartbeat.json');
+            $scope.heartbeat.start();
+
             $scope.scan = function () {
                 cordova.plugins.barcodeScanner.scan(
                     function (res) {
                         if (!res.cancelled) {
-                            console.log(res.text, 'http://' + appSettings.remote.ip + ':9999/api/tickets/void.json?' + res.text);
-                            var req = new XMLHttpRequest();
-                            req.open('GET', 'http://' + appSettings.remote.ip + ':9999/api/tickets/void.json?' + res.text, true);
-                            req.setRequestHeader('Content-Type', 'application/json');
-                            req.onreadystatechange = function () {
-                                if (req.readyState === 4) {
-                                    if (req.status === 200) {
-                                        var response = JSON.parse(req.responseText);
-                                        if (response.success) {
-                                            $scope.alerts = [
-                                                {
+                            $http({
+                                method: 'POST',
+                                url: 'http://' + appSettings.remote.ip + ':9999/api/tickets/void.json',
+                                data: { token: res.text },
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then(function success(response) {
+                                var msg;
+                                switch (response.status) {
+                                    case 200:
+                                        if (response.data.success) {
+                                            $scope.$applyAsync(function () {
+                                                $scope.alerts = [{
                                                     type: 'success',
                                                     msg: 'Ticket is valid',
-                                                    ticket: response.ticket
-                                                }
-                                            ];
-                                            appSocket.sendTicketVoid(response.ticket.token);
-                                        } else {
-                                            $scope.alerts = [
-                                                {
-                                                    type: 'danger',
-                                                    msg: response.error,
-                                                    ticket: response.ticket
-                                                }
-                                            ];
-                                        }
-                                    } else {
-                                        var msg;
-                                        switch (req.status) {
-                                            case 0:
-                                                msg = 'No connection to server';
-                                                break;
-                                            case 404:
-                                                msg = 'Ticket unknown';
-                                                break;
-                                            default:
-                                                msg = 'Request failed with status ' + req.status
-                                        }
-                                        $scope.alerts = [
-                                            {
-                                                type: 'danger',
-                                                msg: msg
+                                                    ticket: response.data.ticket
+                                                }];
+                                            });
+                                            if (response.data.ticket) {
+                                                appSocket.sendTicketVoid(response.data.ticket.token);
                                             }
-                                        ];
-                                        console.log({
-                                            code: req.status,
-                                            message: null
-                                        }, req.responseText);
-                                    }
-                                    $scope.$apply();
+                                        } else {
+                                            $scope.$applyAsync(function () {
+                                                $scope.alerts = [{
+                                                    type: 'danger',
+                                                    msg: response.data.error,
+                                                    ticket: response.data.ticket
+                                                }];
+                                            });
+                                        }
+                                        break;
+                                    case 401:
+                                        msg = response.data.error;
+                                        break;
+                                    case 402:
+                                        if (response.data.ticket) {
+                                            msg = 'Ticket not fully paid: €' + response.data.ticket.order_amount_paid +
+                                                ' of €' + response.data.ticket.order_amount_due;
+                                        } else {
+                                            msg = 'Ticket payment incomplete';
+                                        }
+                                        break;
+                                    case 403:
+                                        msg = 'Ticket invalid';
+                                        break;
+                                    case 404:
+                                        msg = 'Ticket unknown';
+                                        break;
+                                    case 500:
+                                        msg = 'Internal Error';
+                                        break;
+                                    default:
+                                        msg = 'Request failed with status ' + response.status;
+                                        break;
                                 }
-                            };
-                            req.send();
+                                $scope.$applyAsync(function () {
+                                    $scope.alerts = [{
+                                        type: 'danger',
+                                        msg: msg
+                                    }];
+                                });
+                            }, function error(response) {
+                                $scope.$applyAsync(function () {
+                                    $scope.alerts = [{
+                                        type: 'danger',
+                                        msg: 'Request failed with status ' + response.status
+                                    }];
+                                });
+                            });
                         }
                     },
                     function (err) {
                         $scope.alerts = [
                             {
                                 type: 'danger',
-                                msg: 'Scan failed: ' + err
+                                msg: 'Scan failed: ' + err.message
                             }
                         ];
                     }

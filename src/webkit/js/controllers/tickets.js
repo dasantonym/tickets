@@ -1,8 +1,7 @@
 (function () {
     'use strict';
     var require = global.require;
-    angular.module(
-        'tickets.controllers.tickets', [])
+    angular.module('tickets.controllers.tickets', [])
         .controller('Tickets.List', ['$scope', '$q', 'PubSub', 'App.Stats', function ($scope, $q, PubSub, stats) {
             var db = require('lib-local/db');
 
@@ -34,7 +33,9 @@
             });
 
             $scope.claimTicket = function (ticket) {
-                if (window.confirm('Are you sure you are claiming the right ticket ' + ticket.token + ' (' + [ticket.firstname, ticket.lastname].join(' ') + ')?')) {
+                if (window.confirm('Are you sure you are claiming the right ticket ' + ticket.token +
+                        ' (' + [ticket.firstname, ticket.lastname].join(' ') + ')?')) {
+
                     delete ticket['$$hashKey'];
                     ticket.void = true;
                     ticket.void_at = new Date();
@@ -56,11 +57,13 @@
                 var tickets_valid = 0, tickets_void = 0;
                 db.find({}, function (err, tickets) {
                     tickets.sort(function compare(a, b) {
-                        if (a.lastname < b.lastname)
+                        if (a.updated > b.updated) {
                             return -1;
-                        if (a.lastname > b.lastname)
+                        } else if (a.updated < b.updated) {
                             return 1;
-                        return 0;
+                        } else {
+                            return 0;
+                        }
                     });
                     if (err) {
                         $scope.alerts = [{
@@ -68,23 +71,49 @@
                             msg: err.message
                         }];
                     } else {
-                        /*
                         if ($scope.tickets.length === 0) {
+                            $scope.tickets = tickets;
                         } else {
-                            for (var i in tickets) {
-                                if (!$scope.tickets[i].void && tickets[i].void) {
-                                    $scope.tickets[i].void = tickets[i].void;
-                                    $scope.tickets[i].void_at = tickets[i].void_at;
+                            var deleteTickets = [];
+                            $scope.tickets.map(function (ticket) {
+                                var i = 0;
+                                while (i < tickets.length && ticket.uuid !== tickets[i].uuid) {
+                                    i += 1;
+                                }
+                                if (!tickets[i]) {
+                                    deleteTickets.push(ticket.uuid);
+                                    return;
+                                } else {
+                                    if (tickets[i] && !ticket.void && tickets[i].void) {
+                                        ticket.void = tickets[i].void;
+                                        ticket.void_at = tickets[i].void_at;
+                                    }
+
+                                    if (tickets[i] && !ticket.valid && tickets[i].valid) {
+                                        ticket.valid = tickets[i].valid;
+                                    }
+
+                                    tickets_void += ticket.void ? 1 : 0;
+                                    tickets_valid += ticket.valid ? 1 : 0;
+
+                                    return ticket;
+                                }
+                            });
+                            for (var i = $scope.tickets.length - 1; i >= 0; i -= 1) {
+                                if ($scope.tickets[i] === null) {
+                                    $scope.tickets.splice(i, 1);
                                 }
                             }
+                            tickets.map(function (ticket) {
+                                var i = 0;
+                                while (i < $scope.tickets.length && $scope.tickets[i].uuid !== ticket.uuid) {
+                                    i += 1;
+                                }
+                                if (i === $scope.tickets.length) {
+                                    $scope.tickets.unshift(ticket);
+                                }
+                            });
                         }
-                         */
-                        $scope.tickets = tickets;
-                        $scope.tickets.forEach(function (ticket) {
-                            tickets_void += ticket.void ? 1 : 0;
-                            tickets_valid += ticket.valid ? 1 : 0;
-                            return ticket;
-                        });
                     }
                     stats.storeStats(null, null, null, $scope.tickets.length, null, tickets_valid, tickets_void);
                     deferred.resolve();
@@ -101,7 +130,7 @@
 
             function wrapUpdates() {
                 updateList(function () {
-                    setTimeout(wrapUpdates, 5000);
+                    setTimeout(wrapUpdates, 10000);
                 });
             }
 

@@ -7,7 +7,7 @@ angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.So
         filetag.setAttribute("type", "text/javascript");
         filetag.setAttribute("src", file);
 
-        if (existing && filetag.src !== existing.src) {
+        if (existing && filetag && filetag.src !== existing.src) {
             document.getElementsByTagName("head")[0].removeChild(existing);
             document.getElementsByTagName("head")[0].appendChild(filetag);
         } else if (filetag && !existing) {
@@ -29,7 +29,7 @@ angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.So
                 console.log('Socket.io not defined or empty IP, retrying');
                 window.setTimeout(function () {
                     pollSocket(ipAddress);
-                }, 0);
+                }, 100);
             }
         }, 500);
     }
@@ -51,4 +51,5 @@ angular.module("tickets.directives.ioloader", []).directive("ioLoader", ['App.So
             });
         }
     }
+
 }]);

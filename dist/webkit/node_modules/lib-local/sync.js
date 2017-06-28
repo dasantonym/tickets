@@ -11,23 +11,23 @@ module.exports.pendingUpdates = function (callback) {
 };
 
 module.exports.addPendingUpdate = function (ticket_uuid, update, callback) {
-    db.insert({ type: 'pending', ticket_uuid: ticket_uuid, update: update }, function (err, numReplaced) {
+    db.insert({ type: 'pending', ticket_uuid: ticket_uuid, update: update }, function (err) {
         if (typeof callback === 'function') {
-            callback(err, numReplaced);
+            callback(err);
         }
     });
 };
 
 module.exports.remove = function (doc, docId, callback) {
-    db.remove({_id: docId}, {}, function (err, numRemoved) {
+    db.remove({_id: docId}, {}, function (err) {
         if (typeof callback === 'function') {
-            callback(err, numRemoved);
+            callback(err);
         }
     });
 };
 
 module.exports.empty = function (callback) {
-    db.remove({}, {multi: true}, function (err, numRemoved) {
+    db.remove({}, {multi: true}, function (err) {
         if (typeof callback === 'function') {
             callback(err);
         }

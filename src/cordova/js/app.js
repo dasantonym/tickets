@@ -8,7 +8,8 @@
         'tickets.directives.ioloader',
         'tickets.controllers.tickets',
         'tickets.services.settings',
-        'tickets.services.socket'
+        'tickets.services.socket',
+        'tickets.services.heartbeat'
     ])
     .config(['$routeProvider', '$locationProvider', '$logProvider', function ($routeProvider, $locationProvider, $logProvider) {
 
@@ -28,7 +29,6 @@
         $rootScope.remote = {
             ip: appSettings.remote.ip
         };
-
         $rootScope.$apply();
 
         $rootScope.$on('$routeChangeStart', function (e, curr, prev) {

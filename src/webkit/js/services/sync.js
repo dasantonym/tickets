@@ -38,7 +38,7 @@ angular.module('tickets.services.sync', [])
                 wrapPush();
             },
             syncRemoteTickets: function (callback) {
-                var db = require('lib-local/db.js');
+                var db = require('lib-local/db');
                 if (!settings.remote.url || !settings.remote.login || !settings.remote.password) {
                     return callback();
                 }
@@ -138,7 +138,7 @@ angular.module('tickets.services.sync', [])
                 });
             },
             syncRemoteOrders: function (callback) {
-                var dbOrders = require('lib-local/db-orders.js');
+                var dbOrders = require('lib-local/db-orders');
                 if (!settings.remote.url || !settings.remote.login || !settings.remote.password) {
                     return callback();
                 }
@@ -233,11 +233,11 @@ angular.module('tickets.services.sync', [])
                 });
             },
             pushLocal: function (ticket_uuid, update, callback) {
-                var sync = require('lib-local/sync.js');
+                var sync = require('lib-local/sync');
                 sync.addPendingUpdate(ticket_uuid, update, callback);
             },
             pushPending: function (callback) {
-                var sync = require('lib-local/sync.js');
+                var sync = require('lib-local/sync');
                 async.waterfall([
                     function (cb) {
                         sync.pendingUpdates(cb);

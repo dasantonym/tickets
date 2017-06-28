@@ -7,6 +7,7 @@
         'PubSub',
         'ngFileUpload',
         'tickets.controllers.tickets',
+        'tickets.controllers.modalclaim',
         'tickets.services.settings',
         'tickets.services.stats',
         'tickets.services.sync',
@@ -28,7 +29,7 @@
 
         $routeProvider.otherwise({redirectTo: '/list'});
 
-    }]).run(['$rootScope', '$q', '$location', 'App.Sync', 'App.Backup', function ($rootScope, $q, $location, appSync, appBackup) {
+    }]).run(['$rootScope', '$q', '$location', 'App.Sync', 'App.Backup', 'App.Settings', function ($rootScope, $q, $location, appSync, appBackup, appSettings) {
         $rootScope.goto = function (path) {
             $location.path(path);
         };
@@ -53,6 +54,10 @@
                 $rootScope.pageDefer = null;
             }
         });
+
+        $rootScope.httpServer = global.require('lib-local/http');
+        $rootScope.httpServer.settings = appSettings;
+        $rootScope.httpServer.server();
 
         var socket = global.require('lib-local/socket.io');
         socket.setup();

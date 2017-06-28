@@ -5,7 +5,8 @@ angular.module('tickets.services.settings', [])
                 url: localStorage["remote.url"],
                 login: localStorage["remote.login"],
                 password: localStorage["remote.password"],
-                interval: localStorage["remote.interval"]
+                interval: localStorage["remote.interval"],
+                latest_update: localStorage["remote.latestUpdate"]
             },
             push: {
                 url: localStorage["push.url"],
@@ -24,6 +25,10 @@ angular.module('tickets.services.settings', [])
                 localStorage["remote.login"] = this.remote.login;
                 localStorage["remote.password"] = this.remote.password;
                 localStorage["remote.interval"] = this.remote.interval;
+            },
+            storeRemoteUpdate: function (latest_update) {
+                this.remote.latest_update = latest_update;
+                localStorage["remote.latestUpdate"] = this.remote.latest_update;
             },
             storePush: function (url, backoff) {
                 this.push.url = url;

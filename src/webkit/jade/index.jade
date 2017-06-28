@@ -9,7 +9,6 @@ html(ng-app='ticket-server')
         script(src='../node_modules/angular-busy/dist/angular-busy.min.js')
         script(src='../node_modules/async/dist/async.min.js')
         script(src='js/tickets.min.js')
-        script global.require('lib-local/http')();
         link(rel='stylesheet', href='css/main.css')
     body(data-status="{{ status }}")
         .container-fluid(cg-busy="{promise:pagePromise,message:'Loading page...',templateUrl:'./partials/busy.html'}")

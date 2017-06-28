@@ -12,7 +12,7 @@ html(ng-app='ticket-scanner')
         title Tickets
     body
         .container-fluid(cg-busy="{promise:pagePromise,message:'Loading page...',templateUrl:'./partials/busy.html',minDuration:100}")
-            .navbar.navbar-inverse.navbar-fixed-top(name='mainNavigation', role='navigation', check-login)
+            .navbar.navbar-inverse.navbar-fixed-top.navbar-pad(name='mainNavigation', role='navigation', check-login)
                 .container-fluid
                     .navbar-header
                         button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse', ng-click='isCollapsed = !isCollapsed')

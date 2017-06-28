@@ -1,7 +1,10 @@
-module.exports = function () {
+module.exports.settings = {};
+
+module.exports.server = function () {
     var http = require('http'),
         db = require('./db'),
         dbOrders = require('./db-orders'),
+        sync = require('./sync'),
         connect = require('connect'),
         cors = require('cors'),
         async = require('async'),
@@ -10,13 +13,7 @@ module.exports = function () {
     app.use(cors());
     app.use(bodyParser.json());
     app.use(function (req, res) {
-        var querySplit = req.url.split('?');
-        var baseurl = querySplit[0];
-        var token = null;
-        if (querySplit.length > 1) {
-            token = querySplit[1];
-        }
-        switch (baseurl) {
+        switch (req.url) {
             case '/api/tickets.json':
                 db.find({}, function (err, tickets) {
                     res.contentType = 'application/json';
@@ -29,9 +26,12 @@ module.exports = function () {
                 });
                 break;
             case '/api/tickets/void.json':
+                console.log(req.body, req);
                 async.waterfall([
                     function (cb) {
-                        db.findOne({ token: token }, cb);
+                        db.findOne({ token: req.body.token }, function (err, ticket) {
+                            cb(err, ticket);
+                        });
                     },
                     function (ticket, cb) {
                         if (ticket) {
@@ -56,13 +56,13 @@ module.exports = function () {
                             } else {
                                 ticket.void = true;
                                 ticket.void_at = new Date();
-                                ticket.updated_at = new Date();
-                                db.update(ticket, token, function (err) {
+                                ticket.updated = new Date();
+                                db.update(ticket, ticket.token, function (err) {
                                     if (err) {
                                         res.statusCode = 500;
                                         return cb(err);
                                     }
-                                    if (settings.push.url) {
+                                    if (module.exports.settings.push.url) {
                                         sync.addPendingUpdate(ticket.uuid, ticket, function (err) {
                                             cb(err, ticket);
                                         });
@@ -95,21 +95,21 @@ module.exports = function () {
                     },
                     function (ticket, cb) {
                         if (ticket) {
-                            if (ticket.updated_at < req.body.update.updated_at) {
+                            if (ticket.updated < req.body.update.updated) {
                                 db.update(req.body, token, function (err) {
                                     res.statusCode = 200;
                                     cb(err);
                                 });
                             } else {
                                 res.statusCode = 400;
-                                cb(new Error('outdated'));
+                                cb(new Error('update expired'));
                             }
                         } else {
                             res.statusCode = 201;
                             db.create(req.body.update, cb);
                         }
                     }
-                ], function (err, ticket) {
+                ], function (err) {
                     if (err) {
                         if (!res.statusCode || res.statusCode === 200) {
                             res.statusCode = 500;
@@ -120,6 +120,10 @@ module.exports = function () {
                         res.end(JSON.stringify({}));
                     }
                 });
+                break;
+            case '/api/heartbeat.json':
+                res.statusCode = 200;
+                res.end();
                 break;
             default:
                 res.statusCode = 404;

@@ -27,31 +27,31 @@ module.exports.create = function (doc, callback) {
 };
 
 module.exports.update = function (doc, token, callback) {
-    db.update({token: token }, doc, {}, function (err, numReplaced) {
+    db.update({token: token }, doc, {}, function (err) {
         if (typeof callback === 'function') {
-            callback(err, numReplaced);
+            callback(err);
         }
     });
 };
 
 module.exports.upsert = function (doc, token, callback) {
-    db.update({token: token}, doc, {upsert: true}, function (err, numReplaced) {
+    db.update({token: token}, doc, {upsert: true}, function (err) {
         if (typeof callback === 'function') {
-            callback(err, numReplaced);
+            callback(err);
         }
     });
 };
 
 module.exports.remove = function (doc, docId, callback) {
-    db.remove({ _id: docId }, {}, function (err, numRemoved) {
+    db.remove({ _id: docId }, {}, function (err) {
         if (typeof callback === 'function') {
-            callback(err, numRemoved);
+            callback(err);
         }
     });
 };
 
 module.exports.empty = function (callback) {
-    db.remove({}, {multi: true}, function (err, numRemoved) {
+    db.remove({}, {multi: true}, function (err) {
         if (typeof callback === 'function') {
             callback(err);
         }
