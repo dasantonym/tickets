@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<widget xmlns     = "http://www.w3.org/ns/widgets"
+<widget xmlns="http://www.w3.org/ns/widgets"
+        xmlns:cdv="http://cordova.apache.org/ns/1.0"
         id        = "<%= id %>"
         version   = "<%= version %>"
         >
@@ -8,13 +9,24 @@
     <description><%= description %></description>
     <author href="<%= author.url %>" email="<%= author.email %>"><%= author.name %></author>
 
-    <preference name="phonegap-version" value="6.5.0" />
+    <content src="index.html" />
+
+    <preference name="cordova-version" value="3.9.2" />
+    <preference name="deployment-target" value="7.0"/>
     <preference name="orientation"      value="portrait" />
     <preference name="target-device"    value="universal" />
     <preference name="fullscreen"       value="false" />
     <preference name="permissions"      value="none"/>
+    <preference name="BackupWebStorage" value="local"/>
+    <preference name="CordovaWebViewEngine" value="CDVUIWebViewEngine"/>
+    <preference name="CordovaDefaultWebViewEngine" value="CDVUIWebViewEngine"/>
 
     <splash src="www/assets/Default@2x~universal~anyany.png" />
 
     <access origin="*" />
+
+    <allow-intent href="http://*/*"/>
+    <allow-intent href="https://*/*"/>
+
+    <engine name="ios" spec="^3.9.2"/>
 </widget>

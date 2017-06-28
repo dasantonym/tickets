@@ -183,8 +183,7 @@ module.exports = function (grunt) {
                         // Prompt, read an environment variable, or just embed as a string literal
                         return('asdf1234');
                     }
-                },
-                versionCode: 3
+                }
             }
         },
         nwjs: {
@@ -203,6 +202,17 @@ module.exports = function (grunt) {
                 src: ['./dist/webkit/**/*']
             }
         },
+        connect: {
+            ios: {
+                options: {
+                    port: 4444,
+                    base: 'build/platforms/ios/www',
+                    open: 'http://emulate.phonegap.com?url=http://localhost:4444&platform=cordova-1.0.0',
+                    debug: true,
+                    keepalive: true
+                }
+            }
+        },
         exec: {
             webkit: '/Applications/nwjs.app/Contents/MacOS/nwjs ./dist/webkit &'
         },
@@ -217,7 +227,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jade');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-phonegap');
