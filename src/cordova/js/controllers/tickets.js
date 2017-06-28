@@ -71,12 +71,14 @@
                                         msg = 'Request failed with status ' + response.status;
                                         break;
                                 }
-                                $scope.$applyAsync(function () {
-                                    $scope.alerts = [{
-                                        type: 'danger',
-                                        msg: msg
-                                    }];
-                                });
+                                if (msg) {
+                                    $scope.$applyAsync(function () {
+                                        $scope.alerts = [{
+                                            type: 'danger',
+                                            msg: msg
+                                        }];
+                                    });
+                                }
                             }, function error(response) {
                                 $scope.$applyAsync(function () {
                                     $scope.alerts = [{
@@ -88,12 +90,12 @@
                         }
                     },
                     function (err) {
-                        $scope.alerts = [
-                            {
+                        $scope.$applyAsync(function () {
+                            $scope.alerts = [{
                                 type: 'danger',
                                 msg: 'Scan failed: ' + err.message
-                            }
-                        ];
+                            }];
+                        });
                     }
                 );
             };

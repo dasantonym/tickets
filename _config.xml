@@ -11,8 +11,8 @@
 
     <content src="index.html" />
 
-    <preference name="cordova-version" value="3.9.2" />
-    <preference name="deployment-target" value="7.0"/>
+    <preference name="cordova-version" value="4.4.0" />
+    <preference name="deployment-target" value="8.0"/>
     <preference name="orientation"      value="portrait" />
     <preference name="target-device"    value="universal" />
     <preference name="fullscreen"       value="false" />
@@ -28,5 +28,5 @@
     <allow-intent href="http://*/*"/>
     <allow-intent href="https://*/*"/>
 
-    <engine name="ios" spec="^3.9.2"/>
+    <engine name="ios" spec="^4.4.0"/>
 </widget>

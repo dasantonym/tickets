@@ -29,7 +29,7 @@ module.exports = function (grunt) {
                 }
             }
         },
-        jade: {
+        pug: {
             cordova_shared: {
                 expand: true,
                 cwd: 'src/shared/jade/',
@@ -142,9 +142,18 @@ module.exports = function (grunt) {
             config: {
                 root: 'dist/cordova',
                 cli: 'cordova',
+                cordova: '.cordova',
                 cleanBeforeBuild: true,
                 plugins: [
-                    'phonegap-plugin-barcodescanner',
+                    {
+                        id: 'phonegap-plugin-barcodescanner',
+                        variables: [
+                            {
+                                name: 'CAMERA_USAGE_DESCRIPTION',
+                                value: 'To scan barcodes.'
+                            }
+                        ]
+                    },
                     'cordova-plugin-statusbar',
                     'cordova-plugin-splashscreen'
                 ],
@@ -152,6 +161,7 @@ module.exports = function (grunt) {
                 permissions: ['CAMERA','FLASHLIGHT','INTERNET'],
                 verbose: true,
                 debuggable: true,
+                maxBuffer: 1024,
                 minSdkVersion: function () {
                     return(10)
                 },
@@ -202,12 +212,19 @@ module.exports = function (grunt) {
                 src: ['./dist/webkit/**/*']
             }
         },
+        ripple: {
+            options: {
+                path: 'build/platforms/ios/www',
+                port: '9005',
+                keepAlive: true
+            }
+        },
         connect: {
             ios: {
                 options: {
                     port: 4444,
                     base: 'build/platforms/ios/www',
-                    open: 'http://emulate.phonegap.com?url=http://localhost:4444&platform=cordova-1.0.0',
+                    //open: 'http://emulate.phonegap.com?url=http://localhost:4444&platform=cordova-4.4.0',
                     debug: true,
                     keepalive: true
                 }
@@ -224,15 +241,17 @@ module.exports = function (grunt) {
         }
     });
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-jade');
+    grunt.loadNpmTasks('grunt-contrib-pug');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-ripple-emulator');
     grunt.loadNpmTasks('grunt-phonegap');
     grunt.loadNpmTasks('grunt-nw-builder');
 
-    grunt.registerTask('default', ['less', 'jade', 'uglify', 'concat', 'copy']);
+    grunt.registerTask('default', ['less', 'pug', 'uglify', 'concat', 'copy']);
     grunt.registerTask('dev', ['watch:all']);
 };
