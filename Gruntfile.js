@@ -104,7 +104,6 @@ module.exports = function (grunt) {
                     'bower_components/angular-route/angular-route.min.js',
                     'bower_components/angular-animate/angular-animate.min.js',
                     'bower_components/angular-busy/dist/angular-busy.min.js',
-                    'bower_components/angular-PubSub/dist/angular-pubsub.min.js',
                     'bower_components/async/dist/async.min.js'
                 ],
                 dest: 'dist/cordova/js/tickets-deps.min.js'
@@ -142,7 +141,6 @@ module.exports = function (grunt) {
             config: {
                 root: 'dist/cordova',
                 cli: 'cordova',
-                cordova: '.cordova',
                 cleanBeforeBuild: true,
                 plugins: [
                     {
@@ -161,7 +159,6 @@ module.exports = function (grunt) {
                 permissions: ['CAMERA','FLASHLIGHT','INTERNET'],
                 verbose: true,
                 debuggable: true,
-                maxBuffer: 1024,
                 minSdkVersion: function () {
                     return(10)
                 },
@@ -193,7 +190,8 @@ module.exports = function (grunt) {
                         // Prompt, read an environment variable, or just embed as a string literal
                         return('asdf1234');
                     }
-                }
+                },
+                versionCode: 3
             }
         },
         nwjs: {

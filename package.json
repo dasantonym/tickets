@@ -22,6 +22,8 @@
   "version": "0.3.0",
   "main": "Gruntfile.js",
   "devDependencies": {
+    "cordova": "^7.0.1",
+    "cordova-icon": "^0.9.1",
     "grunt": "~1.0.1",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-connect": "^1.0.2",
@@ -32,12 +34,10 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-exec": "^2.0.0",
     "grunt-nw-builder": "^3.1.0",
+    "grunt-phonegap": "^0.15.3",
     "grunt-ripple-emulator": "^0.1.0",
     "ios-deploy": "^1.9.1",
-    "phonegap": "^6.5.1",
-    "cordova": "^7.0.1",
-    "cordova-icon": "^0.9.1",
-    "grunt-phonegap": "^0.15.3"
+    "phonegap": "^6.5.1"
   },
   "dependencies": {
     "angular-ui-bootstrap": "^2.5.0"

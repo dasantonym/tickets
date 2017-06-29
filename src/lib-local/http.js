@@ -26,7 +26,6 @@ module.exports.server = function () {
                 });
                 break;
             case '/api/tickets/void.json':
-                console.log(req.body, req);
                 async.waterfall([
                     function (cb) {
                         db.findOne({ token: req.body.token }, function (err, ticket) {

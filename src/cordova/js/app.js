@@ -4,14 +4,12 @@
         'ui.bootstrap',
         'ngRoute',
         'cgBusy',
-        'PubSub',
-        'tickets.directives.ioloader',
         'tickets.controllers.tickets',
         'tickets.services.settings',
-        'tickets.services.socket',
         'tickets.services.heartbeat'
     ])
-    .config(['$routeProvider', '$locationProvider', '$logProvider', function ($routeProvider, $locationProvider, $logProvider) {
+    .config(['$routeProvider', '$locationProvider', '$logProvider',
+        function ($routeProvider, $locationProvider, $logProvider) {
 
         $logProvider.debugEnabled(true);
 
@@ -21,17 +19,24 @@
         $routeProvider.when('/settings', {templateUrl: partialsPath + 'settings.html', controller: 'Tickets.Settings'});
 
         $routeProvider.otherwise({redirectTo: '/'});
-    }]).run(['$rootScope', '$q', 'App.Settings', '$location', function ($rootScope, $q, appSettings, $location) {
-        $rootScope.goto = function (path) {
-            $location.path(path);
-        };
+    }]).run(['$rootScope', '$q', 'App.Settings', '$location', 'App.Heartbeat',
+            function ($rootScope, $q, appSettings, $location, appHeartbeat) {
 
-        $rootScope.remote = {
-            ip: appSettings.remote.ip
-        };
-        $rootScope.$apply();
+        $rootScope.$applyAsync(function () {
+            $rootScope.remote = {
+                ip: appSettings.remote.ip
+            };
+            $rootScope.goto = function (path) {
+                $location.path(path);
+            };
+            $rootScope.heartbeat = appHeartbeat;
+            if (typeof appSettings.remote.ip === 'string') {
+                $rootScope.heartbeat.setup('http://' + appSettings.remote.ip + ':9999/api/heartbeat.json');
+                $rootScope.heartbeat.start();
+            }
+        });
 
-        $rootScope.$on('$routeChangeStart', function (e, curr, prev) {
+        $rootScope.$on('$routeChangeStart', function () {
             if ($rootScope.pageDefer) {
                 $rootScope.pageDefer.resolve();
                 $rootScope.pageDefer = null;
@@ -39,13 +44,13 @@
             $rootScope.pageDefer = $q.defer();
             $rootScope.pagePromise = $rootScope.pageDefer.promise;
         });
-        $rootScope.$on('$routeChangeSuccess', function (e, curr, prev) {
+        $rootScope.$on('$routeChangeSuccess', function () {
             if ($rootScope.pageDefer) {
                 $rootScope.pageDefer.resolve();
                 $rootScope.pageDefer = null;
             }
         });
-        $rootScope.$on('$routeChangeError', function (e, curr, prev) {
+        $rootScope.$on('$routeChangeError', function () {
             if ($rootScope.pageDefer) {
                 $rootScope.pageDefer.reject();
                 $rootScope.pageDefer = null;
